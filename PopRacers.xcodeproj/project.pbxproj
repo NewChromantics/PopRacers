@@ -7,12 +7,25 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		BF0A883826925FD90011412E /* PopRacers.js in Resources */ = {isa = PBXBuildFile; fileRef = BFF2289D269227CB00AFAE52 /* PopRacers.js */; };
 		BF269CEA26925A760077D78D /* PopCameraDevice.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF269CE926925A760077D78D /* PopCameraDevice.xcframework */; };
 		BF269CEB26925A760077D78D /* PopCameraDevice.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = BF269CE926925A760077D78D /* PopCameraDevice.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		BF269CEE26925A780077D78D /* PopEngine.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF269CED26925A780077D78D /* PopEngine.xcframework */; };
 		BF269CEF26925A780077D78D /* PopEngine.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = BF269CED26925A780077D78D /* PopEngine.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		BF269CF126925A7A0077D78D /* PopH264.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF269CF026925A7A0077D78D /* PopH264.xcframework */; };
 		BF269CF226925A7A0077D78D /* PopH264.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = BF269CF026925A7A0077D78D /* PopH264.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		BFC333D126925DE700EAFDD9 /* PopRacersAppClip.app in Embed App Clips */ = {isa = PBXBuildFile; fileRef = BFC333C226925DE400EAFDD9 /* PopRacersAppClip.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		BFC333D726925EA400EAFDD9 /* PopEngineGui.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFF2289B2692268600AFAE52 /* PopEngineGui.swift */; };
+		BFC333D926925EA700EAFDD9 /* Bridge.mm in Sources */ = {isa = PBXBuildFile; fileRef = BFF22889269223C700AFAE52 /* Bridge.mm */; };
+		BFC333DB26925EA900EAFDD9 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFF228682692216800AFAE52 /* ContentView.swift */; };
+		BFC333DD26925EAB00EAFDD9 /* PopRacersApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFF228662692216800AFAE52 /* PopRacersApp.swift */; };
+		BFC333DF26925EAE00EAFDD9 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BFF2286A2692216A00AFAE52 /* Assets.xcassets */; };
+		BFC333E226925ED400EAFDD9 /* PopEngine.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF269CED26925A780077D78D /* PopEngine.xcframework */; };
+		BFC333E326925ED400EAFDD9 /* PopEngine.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = BF269CED26925A780077D78D /* PopEngine.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		BFC333E526925ED600EAFDD9 /* PopCameraDevice.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF269CE926925A760077D78D /* PopCameraDevice.xcframework */; };
+		BFC333E626925ED600EAFDD9 /* PopCameraDevice.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = BF269CE926925A760077D78D /* PopCameraDevice.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		BFC333E726925ED800EAFDD9 /* PopH264.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF269CF026925A7A0077D78D /* PopH264.xcframework */; };
+		BFC333E826925ED800EAFDD9 /* PopH264.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = BF269CF026925A7A0077D78D /* PopH264.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		BFF228672692216800AFAE52 /* PopRacersApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFF228662692216800AFAE52 /* PopRacersApp.swift */; };
 		BFF228692692216800AFAE52 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFF228682692216800AFAE52 /* ContentView.swift */; };
 		BFF2286B2692216A00AFAE52 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BFF2286A2692216A00AFAE52 /* Assets.xcassets */; };
@@ -21,6 +34,16 @@
 		BFF2289C2692268600AFAE52 /* PopEngineGui.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFF2289B2692268600AFAE52 /* PopEngineGui.swift */; };
 		BFF2289E269227CB00AFAE52 /* PopRacers.js in Resources */ = {isa = PBXBuildFile; fileRef = BFF2289D269227CB00AFAE52 /* PopRacers.js */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		BFC333CF26925DE700EAFDD9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BFF2285B2692216800AFAE52 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = BFC333C126925DE400EAFDD9;
+			remoteInfo = "PopRacers AppClip";
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
 		BF269CEC26925A760077D78D /* Embed Frameworks */ = {
@@ -36,17 +59,44 @@
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		BFC333D526925DE700EAFDD9 /* Embed App Clips */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "$(CONTENTS_FOLDER_PATH)/AppClips";
+			dstSubfolderSpec = 16;
+			files = (
+				BFC333D126925DE700EAFDD9 /* PopRacersAppClip.app in Embed App Clips */,
+			);
+			name = "Embed App Clips";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		BFC333E426925ED400EAFDD9 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				BFC333E626925ED600EAFDD9 /* PopCameraDevice.xcframework in Embed Frameworks */,
+				BFC333E326925ED400EAFDD9 /* PopEngine.xcframework in Embed Frameworks */,
+				BFC333E826925ED800EAFDD9 /* PopH264.xcframework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		BF269CE926925A760077D78D /* PopCameraDevice.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = PopCameraDevice.xcframework; path = Source/Apple/PopCameraDevice.xcframework; sourceTree = "<group>"; };
 		BF269CED26925A780077D78D /* PopEngine.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = PopEngine.xcframework; path = Source/Apple/PopEngine.xcframework; sourceTree = "<group>"; };
 		BF269CF026925A7A0077D78D /* PopH264.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = PopH264.xcframework; path = Source/Apple/PopH264.xcframework; sourceTree = "<group>"; };
+		BFC333C226925DE400EAFDD9 /* PopRacersAppClip.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PopRacersAppClip.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		BFC333CD26925DE700EAFDD9 /* AppClipInfo.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = AppClipInfo.plist; sourceTree = "<group>"; };
+		BFC333CE26925DE700EAFDD9 /* PopRacers_AppClip.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = PopRacers_AppClip.entitlements; sourceTree = "<group>"; };
 		BFF228632692216800AFAE52 /* PopRacers.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PopRacers.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BFF228662692216800AFAE52 /* PopRacersApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PopRacersApp.swift; sourceTree = "<group>"; };
 		BFF228682692216800AFAE52 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		BFF2286A2692216A00AFAE52 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		BFF2286F2692216A00AFAE52 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		BFF2286F2692216A00AFAE52 /* AppInfo.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = AppInfo.plist; sourceTree = "<group>"; };
 		BFF22888269223C600AFAE52 /* PopRacers-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "PopRacers-Bridging-Header.h"; sourceTree = "<group>"; };
 		BFF22889269223C700AFAE52 /* Bridge.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = Bridge.mm; sourceTree = "<group>"; };
 		BFF2288F2692262900AFAE52 /* Apple */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Apple; sourceTree = "<group>"; };
@@ -58,6 +108,16 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		BFC333BF26925DE400EAFDD9 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BFC333E526925ED600EAFDD9 /* PopCameraDevice.xcframework in Frameworks */,
+				BFC333E226925ED400EAFDD9 /* PopEngine.xcframework in Frameworks */,
+				BFC333E726925ED800EAFDD9 /* PopH264.xcframework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		BFF228602692216800AFAE52 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -71,11 +131,19 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		BFC333C326925DE400EAFDD9 /* PopRacersAppClip */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = PopRacersAppClip;
+			sourceTree = "<group>";
+		};
 		BFF2285A2692216800AFAE52 = {
 			isa = PBXGroup;
 			children = (
 				BFF2289D269227CB00AFAE52 /* PopRacers.js */,
 				BFF228652692216800AFAE52 /* Source */,
+				BFC333C326925DE400EAFDD9 /* PopRacersAppClip */,
 				BFF228642692216800AFAE52 /* Products */,
 				BFF2287C2692221600AFAE52 /* Frameworks */,
 			);
@@ -85,6 +153,7 @@
 			isa = PBXGroup;
 			children = (
 				BFF228632692216800AFAE52 /* PopRacers.app */,
+				BFC333C226925DE400EAFDD9 /* PopRacersAppClip.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -95,10 +164,12 @@
 				BFF2288F2692262900AFAE52 /* Apple */,
 				BFF2289B2692268600AFAE52 /* PopEngineGui.swift */,
 				BFF22889269223C700AFAE52 /* Bridge.mm */,
+				BFC333CD26925DE700EAFDD9 /* AppClipInfo.plist */,
 				BFF228662692216800AFAE52 /* PopRacersApp.swift */,
+				BFC333CE26925DE700EAFDD9 /* PopRacers_AppClip.entitlements */,
 				BFF228682692216800AFAE52 /* ContentView.swift */,
 				BFF2286A2692216A00AFAE52 /* Assets.xcassets */,
-				BFF2286F2692216A00AFAE52 /* Info.plist */,
+				BFF2286F2692216A00AFAE52 /* AppInfo.plist */,
 				BFF22888269223C600AFAE52 /* PopRacers-Bridging-Header.h */,
 			);
 			path = Source;
@@ -120,6 +191,24 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		BFC333C126925DE400EAFDD9 /* PopRacersAppClip */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = BFC333D226925DE700EAFDD9 /* Build configuration list for PBXNativeTarget "PopRacersAppClip" */;
+			buildPhases = (
+				BFC333BE26925DE400EAFDD9 /* Sources */,
+				BFC333BF26925DE400EAFDD9 /* Frameworks */,
+				BFC333C026925DE400EAFDD9 /* Resources */,
+				BFC333E426925ED400EAFDD9 /* Embed Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = PopRacersAppClip;
+			productName = "PopRacers AppClip";
+			productReference = BFC333C226925DE400EAFDD9 /* PopRacersAppClip.app */;
+			productType = "com.apple.product-type.application.on-demand-install-capable";
+		};
 		BFF228622692216800AFAE52 /* PopRacers */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = BFF228722692216A00AFAE52 /* Build configuration list for PBXNativeTarget "PopRacers" */;
@@ -128,10 +217,12 @@
 				BFF228602692216800AFAE52 /* Frameworks */,
 				BFF228612692216800AFAE52 /* Resources */,
 				BF269CEC26925A760077D78D /* Embed Frameworks */,
+				BFC333D526925DE700EAFDD9 /* Embed App Clips */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				BFC333D026925DE700EAFDD9 /* PBXTargetDependency */,
 			);
 			name = PopRacers;
 			productName = PopRacers;
@@ -147,6 +238,9 @@
 				LastSwiftUpdateCheck = 1220;
 				LastUpgradeCheck = 1220;
 				TargetAttributes = {
+					BFC333C126925DE400EAFDD9 = {
+						CreatedOnToolsVersion = 12.2;
+					};
 					BFF228622692216800AFAE52 = {
 						CreatedOnToolsVersion = 12.2;
 						LastSwiftMigration = 1220;
@@ -167,11 +261,21 @@
 			projectRoot = "";
 			targets = (
 				BFF228622692216800AFAE52 /* PopRacers */,
+				BFC333C126925DE400EAFDD9 /* PopRacersAppClip */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		BFC333C026925DE400EAFDD9 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BF0A883826925FD90011412E /* PopRacers.js in Resources */,
+				BFC333DF26925EAE00EAFDD9 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		BFF228612692216800AFAE52 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -185,6 +289,17 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		BFC333BE26925DE400EAFDD9 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BFC333D726925EA400EAFDD9 /* PopEngineGui.swift in Sources */,
+				BFC333DB26925EA900EAFDD9 /* ContentView.swift in Sources */,
+				BFC333D926925EA700EAFDD9 /* Bridge.mm in Sources */,
+				BFC333DD26925EAB00EAFDD9 /* PopRacersApp.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		BFF2285F2692216800AFAE52 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -198,7 +313,63 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		BFC333D026925DE700EAFDD9 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = BFC333C126925DE400EAFDD9 /* PopRacersAppClip */;
+			targetProxy = BFC333CF26925DE700EAFDD9 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin XCBuildConfiguration section */
+		BFC333D326925DE700EAFDD9 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Source/PopRacers_AppClip.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_ASSET_PATHS = "";
+				DEVELOPMENT_TEAM = X52DR36JY2;
+				ENABLE_PREVIEWS = YES;
+				INFOPLIST_FILE = "$(SRCROOT)/Source/AppClipInfo.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.NewChromantics.PopRacers.Clip;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "Source/PopRacers-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		BFC333D426925DE700EAFDD9 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Source/PopRacers_AppClip.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_ASSET_PATHS = "";
+				DEVELOPMENT_TEAM = X52DR36JY2;
+				ENABLE_PREVIEWS = YES;
+				INFOPLIST_FILE = "$(SRCROOT)/Source/AppClipInfo.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.NewChromantics.PopRacers.Clip;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "Source/PopRacers-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 		BFF228702692216A00AFAE52 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -320,13 +491,14 @@
 		BFF228732692216A00AFAE52 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = X52DR36JY2;
 				ENABLE_PREVIEWS = YES;
-				INFOPLIST_FILE = "$(SRCROOT)/Source/Info.plist";
+				INFOPLIST_FILE = "$(SRCROOT)/Source/AppInfo.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -344,13 +516,14 @@
 		BFF228742692216A00AFAE52 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = X52DR36JY2;
 				ENABLE_PREVIEWS = YES;
-				INFOPLIST_FILE = "$(SRCROOT)/Source/Info.plist";
+				INFOPLIST_FILE = "$(SRCROOT)/Source/AppInfo.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -367,6 +540,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		BFC333D226925DE700EAFDD9 /* Build configuration list for PBXNativeTarget "PopRacersAppClip" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				BFC333D326925DE700EAFDD9 /* Debug */,
+				BFC333D426925DE700EAFDD9 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		BFF2285E2692216800AFAE52 /* Build configuration list for PBXProject "PopRacers" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
