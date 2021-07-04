@@ -30,7 +30,6 @@
 		BFF228692692216800AFAE52 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFF228682692216800AFAE52 /* ContentView.swift */; };
 		BFF2286B2692216A00AFAE52 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BFF2286A2692216A00AFAE52 /* Assets.xcassets */; };
 		BFF2288A269223C700AFAE52 /* Bridge.mm in Sources */ = {isa = PBXBuildFile; fileRef = BFF22889269223C700AFAE52 /* Bridge.mm */; };
-		BFF228902692262900AFAE52 /* Apple in Resources */ = {isa = PBXBuildFile; fileRef = BFF2288F2692262900AFAE52 /* Apple */; };
 		BFF2289C2692268600AFAE52 /* PopEngineGui.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFF2289B2692268600AFAE52 /* PopEngineGui.swift */; };
 		BFF2289E269227CB00AFAE52 /* PopRacers.js in Resources */ = {isa = PBXBuildFile; fileRef = BFF2289D269227CB00AFAE52 /* PopRacers.js */; };
 /* End PBXBuildFile section */
@@ -131,19 +130,11 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		BFC333C326925DE400EAFDD9 /* PopRacersAppClip */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = PopRacersAppClip;
-			sourceTree = "<group>";
-		};
 		BFF2285A2692216800AFAE52 = {
 			isa = PBXGroup;
 			children = (
 				BFF2289D269227CB00AFAE52 /* PopRacers.js */,
 				BFF228652692216800AFAE52 /* Source */,
-				BFC333C326925DE400EAFDD9 /* PopRacersAppClip */,
 				BFF228642692216800AFAE52 /* Products */,
 				BFF2287C2692221600AFAE52 /* Frameworks */,
 			);
@@ -280,7 +271,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BFF228902692262900AFAE52 /* Apple in Resources */,
 				BFF2289E269227CB00AFAE52 /* PopRacers.js in Resources */,
 				BFF2286B2692216A00AFAE52 /* Assets.xcassets in Resources */,
 			);
@@ -405,7 +395,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				ENABLE_BITCODE = NO;
+				ENABLE_BITCODE = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
@@ -467,7 +457,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				ENABLE_BITCODE = NO;
+				ENABLE_BITCODE = YES;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
