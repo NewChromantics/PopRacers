@@ -1,21 +1,24 @@
 import * as SceneAssets from './SceneAssets.js'
+import * as Xr from './XrFrame.js'
+import {CreateRandomImage} from './PopEngineCommon/Images.js'
 
 const Default = 'RenderScene.js';
 export default Default;
 
-/*
-let LastBackgroundImage;
+let LastXrBackgroundImage = CreateRandomImage(128,128);
+let LastXrFrame;
 
 async function XrThread()
 {
 	while(true)
 	{
 		const Frame = await Xr.WaitForNextFrame();
-		LastBackgroundImage = Frame;
+		LastXrBackgroundImage = Frame;
+		LastXrFrame = Frame;
 	}
 }
 XrThread().catch(Pop.Warning);
-*/
+
 
 
 export async function LoadAssets(RenderContext)
@@ -49,7 +52,8 @@ function GetSceneRenderCommands(Camera)
 	const Assets = SceneAssets.GetAssets();
 	
 	const Uniforms = {};
-	const RenderQuadCommand = ['Draw',Assets.ScreenQuad,Assets.TestShader,Uniforms];
+	Uniforms.Image = LastXrBackgroundImage;
+	const RenderQuadCommand = ['Draw',Assets.ScreenQuad,Assets.BlitShader,Uniforms];
 	
 	return [RenderQuadCommand];
 }

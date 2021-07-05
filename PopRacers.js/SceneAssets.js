@@ -6,6 +6,7 @@ let TestShader = null;
 //	todo: get rid of this requirement from sokol
 const TestShaderUniforms = 
 [
+	{Name:'Image',Type:'sampler2D'},
 /*
 	{Name:'ColourA',Type:'vec4'},
 	{Name:'ColourB',Type:'vec4'},
@@ -42,9 +43,10 @@ const TestShader_FragSource =`
 #version 100
 precision highp float;
 varying vec2 uv;
+uniform sampler2D Image;
 void main()
 {
-	gl_FragColor = vec4( uv, 0, 1 );
+	gl_FragColor = texture2D( Image, uv );
 }
 `;
 
@@ -161,6 +163,6 @@ export function GetAssets()
 {
 	const Assets = {};
 	Assets.ScreenQuad = ScreenQuad;
-	Assets.TestShader = TestShader;
+	Assets.BlitShader = TestShader;
 	return Assets;
 }
