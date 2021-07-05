@@ -1,31 +1,29 @@
+import {CreateCubeGeometry} from './PopEngineCommon/CommonGeometry.js'
+
 const Default = 'SceneAssets.js';
 export default Default;
 
 
-let TestShader = null;
+let BlitShader = null;
 //	todo: get rid of this requirement from sokol
-const TestShaderUniforms = 
+const BlitShaderUniforms = 
 [
 	{Name:'Image',Type:'sampler2D'},
-/*
-	{Name:'ColourA',Type:'vec4'},
-	{Name:'ColourB',Type:'vec4'},
-	{Name:'ImageA',Type:'sampler2D'},
-	{Name:'ImageB',Type:'sampler2D'},
-	{Name:'ImageC',Type:'sampler2D'},
-	{Name:'ImageD',Type:'sampler2D'},
-	{Name:'ImageE',Type:'sampler2D'},
-	{Name:'ImageF',Type:'sampler2D'},
-	{Name:'ImageG',Type:'sampler2D'},
-	{Name:'MouseUv',Type:'vec2'},
-	*/
+];
+
+let CubeShader = null;
+//	todo: get rid of this requirement from sokol
+const CubeShaderUniforms = 
+[
+	{Name:'Image',Type:'sampler2D'},
 ];
 
 let ScreenQuad = null;
-let ScreenQuad_Attribs = null;
+let ScreenQuad_AttribNames = [];
+let CubeTriangleBuffer = null;
+let Cube_AttribNames = [];
 
-
-const TestShader_VertSource =`
+const BlitShader_VertSource =`
 #version 100
 precision highp float;
 attribute vec3 LocalUv;
@@ -39,7 +37,7 @@ void main()
 }
 `;
 
-const TestShader_FragSource =`
+const BlitShader_FragSource =`
 #version 100
 precision highp float;
 varying vec2 uv;
@@ -50,6 +48,30 @@ void main()
 }
 `;
 
+const CubeShader_VertSource =`
+#version 100
+precision highp float;
+attribute vec3 LocalUv;
+attribute vec3 LocalPosition;
+varying vec2 uv;
+void main()
+{
+	gl_Position = vec4(LocalPosition,1);
+	gl_Position.z = 0.5;
+	uv = LocalUv.xy;
+}
+`;
+
+const CubeShader_FragSource =`
+#version 100
+precision highp float;
+varying vec2 uv;
+uniform sampler2D Image;
+void main()
+{
+	gl_FragColor = texture2D( Image, uv );
+}
+`;
 
 function GetScreenQuad(MinX,MinY,MaxX,MaxY,TheZ=0)
 {
@@ -92,7 +114,9 @@ function GetScreenQuad(MinX,MinY,MaxX,MaxY,TheZ=0)
 }
 
 
-async function CreateTriangleBuffer(RenderContext,Geometry)
+//	gr: this is very old conversion
+//		now should be named attribs when coming in
+async function CreateTriangleBuffer(RenderContext,Geometry,GeometryAttribNames)
 {
 	//	auto-calc triangle counts or vertex sizes etc
 	if ( !Geometry.TriangleCount )
@@ -129,33 +153,37 @@ async function CreateTriangleBuffer(RenderContext,Geometry)
 	//	these need to be in the right order...
 	//	that depends what order thejs lib reads VertexAttribs in CreateGeometry...
 	//	TriangleBuffer isn't an object either...
-	ScreenQuad_Attribs = Object.keys(VertexAttribs);
+	//	gr: these aren't being set on the object (sealed??)
+	//TriangleBuffer.AttribNames = Object.keys(VertexAttribs);
+	GeometryAttribNames.push( ...Object.keys(VertexAttribs) );
 	
 	return TriangleBuffer;
 }
-
-async function GetScreenQuad_TriangleBuffer(RenderContext)
-{
-	//const Geometry = GetScreenQuad(-0.5,-0.5,0.5,0.5,0.5);
-	const Geometry = GetScreenQuad(-1,-1,1,1);
-	const Buffer = CreateTriangleBuffer(RenderContext,Geometry);
-	return Buffer;
-}
-
 
 
 export async function LoadAssets(RenderContext)
 {
 	if ( !ScreenQuad )
-		ScreenQuad = await GetScreenQuad_TriangleBuffer(RenderContext);
-
-	if ( !TestShader )
 	{
-		const FragSource = TestShader_FragSource;
-		const VertSource = TestShader_VertSource;
-		const TestShaderAttribs = ScreenQuad_Attribs;
-		TestShader = await RenderContext.CreateShader(VertSource,FragSource,TestShaderUniforms,TestShaderAttribs);
-		Pop.Debug(`TestShader=${TestShader}`);
+		const Geometry = GetScreenQuad(-1,-1,1,1);
+		ScreenQuad = await CreateTriangleBuffer(RenderContext,Geometry,ScreenQuad_AttribNames);
+	}
+	/*
+	if ( !CubeTriangleBuffer )
+	{
+		const Geometry = CreateCubeGeometry();
+		CubeTriangleBuffer = await CreateTriangleBuffer(RenderContext,Geometry,Cube_AttribNames);
+	}
+*/
+	if ( !BlitShader && ScreenQuad )
+	{
+		const FragSource = BlitShader_FragSource;
+		const VertSource = BlitShader_VertSource;
+		//	gr: this attrib order is important...
+		const BlitShaderAttribs = ['LocalPosition','LocalUv'];//ScreenQuad.AttribNames;
+		Pop.Debug(`BlitShaderAttribs=${BlitShaderAttribs} ScreenQuad.AttribNames=${ScreenQuad.AttribNames} ScreenQuad_AttribNames=${ScreenQuad_AttribNames}`);
+		BlitShader = await RenderContext.CreateShader(VertSource,FragSource,BlitShaderUniforms,BlitShaderAttribs);
+		Pop.Debug(`BlitShader=${BlitShader}`);
 	}
 }
 
@@ -163,6 +191,8 @@ export function GetAssets()
 {
 	const Assets = {};
 	Assets.ScreenQuad = ScreenQuad;
-	Assets.BlitShader = TestShader;
+	Assets.BlitShader = BlitShader;
+	//Assets.Cube = CubeTriangleBuffer;
+	//Assets.CubeShader = CubeShader;
 	return Assets;
 }
