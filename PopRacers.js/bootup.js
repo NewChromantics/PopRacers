@@ -1,7 +1,11 @@
-let Window = new Pop.Gui.Window(null);
-//let Renderer = new Pop.Sokol.Context(Window,'TestRenderView');
 
-async function CreateRenderContext()
+import * as RenderScene from './RenderScene.js'
+//import * as Xr from './XrFrame.js'
+
+Pop.Debug(`RenderScene = ${Object.keys(RenderScene)}`);
+
+
+async function CreateMainWindowRenderContext(Window)
 {
 	for ( let i=0;	i<100;	i++ )
 	{
@@ -22,30 +26,25 @@ async function CreateRenderContext()
 	throw `Couldn't make render context`;
 }
 
-async function SokolRenderThread()
+
+
+async function WindowRenderThread(Window)
 {
 	//	new sokol renderer
 	const RenderThrottleMs = 40;
-	const Sokol = await CreateRenderContext();
+	const Sokol = await CreateMainWindowRenderContext(Window);
 
 	let FrameCount = 0;
-	
-	function GetRenderCommands()
-	{
-		let Commands = [];
-		const Blue = (FrameCount % 60)/60;
-		const ClearColour = [0,Blue,1];
-		Commands.push(['SetRenderTarget',null,ClearColour]);
-		return Commands;
-	}
 
 	while (Sokol)
 	{
 		try
 		{
-			const Commands = GetRenderCommands();
+			await RenderScene.LoadAssets(Sokol);
+			const Commands = RenderScene.GetRenderCommands(FrameCount);
 			await Sokol.Render(Commands);
 			FrameCount++;
+			await Pop.Yield(RenderThrottleMs);
 		}
 		catch(e)
 		{
@@ -54,5 +53,7 @@ async function SokolRenderThread()
 		}
 	}
 }
-SokolRenderThread().catch(Pop.Warning);
+const MainWindow = new Pop.Gui.Window(null);
+WindowRenderThread(MainWindow).catch(Pop.Warning);
+
 
