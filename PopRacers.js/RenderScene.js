@@ -67,7 +67,7 @@ function GetSceneRenderCommands(Camera)
 		const Uniforms = {};
 		
 		//const RenderTargetRect = [0,0,1280,720];
-		//const RenderTargetRect = [0,0,1,1];
+		const RenderTargetRect = [0,0,1,1];
 		//const RenderTargetRect = [0,0,1,720/1280];
 		const WorldToCameraMatrix = Camera.GetWorldToCameraMatrix();
 		const CameraProjectionMatrix = Camera.GetProjectionMatrix( RenderTargetRect );

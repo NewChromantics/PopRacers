@@ -13,7 +13,7 @@ precision highp float;
 varying vec2 FragLocalUv;
 void main()
 {
-	gl_FragColor = vec4( FragLocalUv*100.0, 1.0, 1 );
+	gl_FragColor = vec4( FragLocalUv, 1.0, 1 );
 }
 `;
 
