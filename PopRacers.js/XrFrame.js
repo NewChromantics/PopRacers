@@ -1,5 +1,6 @@
 import PromiseQueue from './PopEngineCommon/PromiseQueue.js'
 import PopCamera from './PopEngineCommon/Camera.js'
+import {CreateIdentityMatrix,MatrixInverse4x4,GetMatrixTransposed} from './PopEngineCommon/Math.js'
 
 const Default = 'XrFrame.js';
 export default Default;
@@ -34,6 +35,8 @@ async function CameraThread()
 	}
 }
 
+
+
 export async function WaitForNextFrame()
 {
 	//	start thread if there isn't one
@@ -61,10 +64,103 @@ export async function WaitForNextFrame()
 	const Frame = {};
 	Frame.Image = CameraFrame.Planes[0];
 
-	Frame.Camera = new PopCamera();
-	Frame.Camera.ProjectionMatrix = CameraMeta.ProjectionMatrix;
-	Frame.Camera.GetLocalToWorldMatrix = function()	{	return CameraMeta.LocalToWorld;	};
-	
 
+	function GetLocalToWorld()
+	{
+		const LocalToWorld = CameraMeta.LocalToWorld;
+		
+		if (LocalToWorld == null || LocalToWorld.length == 0 )
+			return CreateIdentityMatrix();
+
+		//	convert arkit to unity/pop
+		function InvertZMatrix(RightHandMatrix)
+		{
+			if ( true )	//	col major approach
+			{
+				//	unity
+				//	1	1	-1	1
+				//	1	1	-1	1
+				//	-1	-1	1	-1
+				//	1	1	1	1
+				
+				//	this
+				//	1	1	-1	1
+				//	1	1	-1	1
+				//	-1	-1	1	-1
+				//	1	1	-1	1
+				const LocalToWorld = RightHandMatrix;
+				const Transform = [];
+					
+				Transform[0] = LocalToWorld[0];
+				Transform[1] = LocalToWorld[1];
+				Transform[2] = -LocalToWorld[2];
+				Transform[3] = LocalToWorld[3];
+				
+				Transform[4] = LocalToWorld[4];
+				Transform[5] = LocalToWorld[5];
+				Transform[6] = -LocalToWorld[6];
+				Transform[7] = LocalToWorld[7];
+
+				Transform[8] = -LocalToWorld[8];
+				Transform[9] = -LocalToWorld[9];
+				Transform[10] = LocalToWorld[10];	//	do not invert this
+				Transform[11] = -LocalToWorld[11];
+						
+				Transform[12] = LocalToWorld[12];
+				Transform[13] = LocalToWorld[13];
+				Transform[14] = -LocalToWorld[14];
+				Transform[15] = LocalToWorld[15];
+				
+				return Transform;
+			}
+				
+			//	this is now working on unity, but had the matrix transposed wrong
+			//	BUT the position is now backwards compared to before
+			RightHandMatrix = GetMatrixTransposed(RightHandMatrix);
+			const InvertZ =
+			[
+				1,0,0,0,
+				0,1,0,0,
+				0,0,-1,0,
+				0,0,0,1
+			];
+			let Left = MatrixMultiply4x4(InvertZ,RightHandMatrix);
+			RightHandMatrix = GetMatrixTransposed(RightHandMatrix);
+			return Left;
+		}
+
+		//	data comes in column major, our invert is row major
+		//	gr: inverse is now column major too
+		let Transform = LocalToWorld.slice();
+
+		//	convert right hand to left, but can't quite do it in one multiply, so rebuilding matrix (which is stable)
+		Transform = InvertZMatrix(Transform);
+
+		//	gr: we seem to need to transpose to column major for opengl
+		//		unity doesn't, as it stores matrixes in coloumn major (so I guess Unity's SetMatrix() maybe does conversions??)
+		const TranposeLocalToWorldOut = true;
+		if ( TranposeLocalToWorldOut )
+			Transform = GetMatrixTransposed(Transform);
+		return Transform;
+	}
+
+
+	const WorldToLocal = MatrixInverse4x4(GetLocalToWorld());
+
+
+	Frame.Camera = new PopCamera();
+	//Frame.Camera.ProjectionMatrix = CameraMeta.ProjectionMatrix;
+	//Frame.Camera.GetLocalToWorldMatrix = function()	{	return CameraMeta.LocalToWorld;	};
+	//Frame.Camera.GetWorldToCameraMatrix = function()	{	return MatrixInverse4x4(CameraMeta.LocalToWorld);	}
+	Frame.Camera.GetWorldToCameraMatrix = function()	{	return WorldToLocal;	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	return Frame;
 }	

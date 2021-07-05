@@ -1,16 +1,30 @@
 import {CreateCubeGeometry} from './PopEngineCommon/CommonGeometry.js'
+import {GeoVertGlsl} from './Assets/Geo.Vert.glsl.js'
+import {ExtractShaderUniforms} from './PopEngineCommon/Shaders.js'
 
 const Default = 'SceneAssets.js';
 export default Default;
+ 
+const CubeShader_VertSource = GeoVertGlsl;
 
+const CubeShader_FragSource = `
+#version 100
+precision highp float;
+varying vec2 FragLocalUv;
+void main()
+{
+	gl_FragColor = vec4( FragLocalUv*100.0, 1.0, 1 );
+}
+`;
 
 let BlitShader = null;
 //	todo: get rid of this requirement from sokol
+/*
 const BlitShaderUniforms = 
 [
 	{Name:'Image',Type:'sampler2D'},
 ];
-
+*/
 let CubeShader = null;
 //	todo: get rid of this requirement from sokol
 const CubeShaderUniforms = 
@@ -32,7 +46,7 @@ varying vec2 uv;
 void main()
 {
 	gl_Position = vec4(LocalPosition,1);
-	gl_Position.z = 0.5;
+	gl_Position.z = 0.99;
 	uv = LocalUv.xy;
 }
 `;
@@ -44,34 +58,11 @@ varying vec2 uv;
 uniform sampler2D Image;
 void main()
 {
-	gl_FragColor = texture2D( Image, uv );
+	gl_FragColor = texture2D( Image, vec2(uv.x,1.0-uv.y) );
 }
 `;
 
-const CubeShader_VertSource =`
-#version 100
-precision highp float;
-attribute vec3 LocalUv;
-attribute vec3 LocalPosition;
-varying vec2 uv;
-void main()
-{
-	gl_Position = vec4(LocalPosition,1);
-	gl_Position.z = 0.5;
-	uv = LocalUv.xy;
-}
-`;
 
-const CubeShader_FragSource =`
-#version 100
-precision highp float;
-varying vec2 uv;
-uniform sampler2D Image;
-void main()
-{
-	gl_FragColor = texture2D( Image, uv );
-}
-`;
 
 function GetScreenQuad(MinX,MinY,MaxX,MaxY,TheZ=0)
 {
@@ -107,57 +98,22 @@ function GetScreenQuad(MinX,MinY,MaxX,MaxY,TheZ=0)
 	AddTriangle( br, bl, tl );
 	
 	const Geometry = {};
-	Geometry.Positions = Positions;
-	Geometry.PositionSize = 3;
-	Geometry.TexCoords = TexCoords;
+	Geometry.LocalPosition = {};
+	Geometry.LocalPosition.Data = new Float32Array( Positions );
+	Geometry.LocalPosition.Size = 3;
+
+	Geometry.LocalUv = {};
+	Geometry.LocalUv.Data = new Float32Array( TexCoords );
+	Geometry.LocalUv.Size = 3;
+
 	return Geometry;
 }
 
 
 //	gr: this is very old conversion
 //		now should be named attribs when coming in
-async function CreateTriangleBuffer(RenderContext,Geometry,GeometryAttribNames)
+async function CreateTriangleBuffer(RenderContext,Geometry)
 {
-	//	auto-calc triangle counts or vertex sizes etc
-	if ( !Geometry.TriangleCount )
-	{
-		if ( Geometry.PositionSize && Geometry.Positions )
-		{
-			Geometry.TriangleCount = Geometry.Positions.length / Geometry.PositionSize;
-		}
-		else
-		{
-			throw `Cannot determine trianglecount/vertex attribute size for geometry`;
-		}
-	}
-	
-	const VertexAttribs = [];
-	const LocalPosition = {};
-	//	gr: should engine always just figure this out?
-	LocalPosition.Size = Geometry.Positions.length / Geometry.TriangleCount;
-	LocalPosition.Data = new Float32Array( Geometry.Positions );
-	VertexAttribs['LocalPosition'] = LocalPosition;
-	
-	if ( Geometry.TexCoords )
-	{
-		const Uv0 = {};
-		Uv0.Size = Geometry.TexCoords.length / Geometry.TriangleCount;
-		Uv0.Data = new Float32Array( Geometry.TexCoords );
-		VertexAttribs['LocalUv'] = Uv0;
-	}
-	
-	//const TriangleIndexes = new Int32Array( Geometry.TriangleIndexes );
-	const TriangleIndexes = undefined;
-	const TriangleBuffer = await RenderContext.CreateGeometry( VertexAttribs, TriangleIndexes );
-	
-	//	these need to be in the right order...
-	//	that depends what order thejs lib reads VertexAttribs in CreateGeometry...
-	//	TriangleBuffer isn't an object either...
-	//	gr: these aren't being set on the object (sealed??)
-	//TriangleBuffer.AttribNames = Object.keys(VertexAttribs);
-	GeometryAttribNames.push( ...Object.keys(VertexAttribs) );
-	
-	return TriangleBuffer;
 }
 
 
@@ -166,24 +122,32 @@ export async function LoadAssets(RenderContext)
 	if ( !ScreenQuad )
 	{
 		const Geometry = GetScreenQuad(-1,-1,1,1);
-		ScreenQuad = await CreateTriangleBuffer(RenderContext,Geometry,ScreenQuad_AttribNames);
+		ScreenQuad_AttribNames = Object.keys(Geometry);
+		ScreenQuad =  await RenderContext.CreateGeometry( Geometry, undefined );
 	}
-	/*
+
 	if ( !CubeTriangleBuffer )
 	{
-		const Geometry = CreateCubeGeometry();
-		CubeTriangleBuffer = await CreateTriangleBuffer(RenderContext,Geometry,Cube_AttribNames);
+		const CubeSize = 0.01;
+		const Geometry = CreateCubeGeometry(-CubeSize,CubeSize);
+		CubeTriangleBuffer = await RenderContext.CreateGeometry(Geometry,undefined);
+		Cube_AttribNames = Object.keys(Geometry);
 	}
-*/
+
 	if ( !BlitShader && ScreenQuad )
 	{
 		const FragSource = BlitShader_FragSource;
 		const VertSource = BlitShader_VertSource;
-		//	gr: this attrib order is important...
-		const BlitShaderAttribs = ['LocalPosition','LocalUv'];//ScreenQuad.AttribNames;
-		Pop.Debug(`BlitShaderAttribs=${BlitShaderAttribs} ScreenQuad.AttribNames=${ScreenQuad.AttribNames} ScreenQuad_AttribNames=${ScreenQuad_AttribNames}`);
-		BlitShader = await RenderContext.CreateShader(VertSource,FragSource,BlitShaderUniforms,BlitShaderAttribs);
-		Pop.Debug(`BlitShader=${BlitShader}`);
+		const ShaderUniforms = ExtractShaderUniforms(VertSource,FragSource);
+		BlitShader = await RenderContext.CreateShader(VertSource,FragSource,ShaderUniforms,ScreenQuad_AttribNames);
+	}
+	
+	if ( !CubeShader && CubeTriangleBuffer )
+	{
+		const FragSource = CubeShader_FragSource;
+		const VertSource = CubeShader_VertSource;
+		const ShaderUniforms = ExtractShaderUniforms(VertSource,FragSource);
+		CubeShader = await RenderContext.CreateShader(VertSource,FragSource,ShaderUniforms,Cube_AttribNames);
 	}
 }
 
@@ -192,7 +156,9 @@ export function GetAssets()
 	const Assets = {};
 	Assets.ScreenQuad = ScreenQuad;
 	Assets.BlitShader = BlitShader;
-	//Assets.Cube = CubeTriangleBuffer;
-	//Assets.CubeShader = CubeShader;
+	
+	Assets.CubeGeo = CubeTriangleBuffer;
+	Assets.CubeShader = CubeShader;
+	
 	return Assets;
 }
