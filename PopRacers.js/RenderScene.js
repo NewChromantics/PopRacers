@@ -6,15 +6,15 @@ const Default = 'RenderScene.js';
 export default Default;
 
 let LastXrBackgroundImage = CreateRandomImage(128,128);
-let LastXrFrame;
+let LastXrCamera = null;
 
 async function XrThread()
 {
 	while(true)
 	{
 		const Frame = await Xr.WaitForNextFrame();
-		LastXrBackgroundImage = Frame;
-		LastXrFrame = Frame;
+		LastXrBackgroundImage = Frame.Image;
+		LastXrCamera = Frame.Camera;
 	}
 }
 XrThread().catch(Pop.Warning);
