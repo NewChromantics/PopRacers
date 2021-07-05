@@ -2,11 +2,10 @@ import {CreateCubeGeometry} from './PopEngineCommon/CommonGeometry.js'
 import {GeoVertGlsl} from './Assets/Geo.Vert.glsl.js'
 import {ExtractShaderUniforms} from './PopEngineCommon/Shaders.js'
 
+
 const Default = 'SceneAssets.js';
 export default Default;
  
-const CubeShader_VertSource = GeoVertGlsl;
-
 const CubeShader_FragSource = `
 #version 100
 precision highp float;
@@ -16,6 +15,13 @@ void main()
 	gl_FragColor = vec4( FragLocalUv, 1.0, 1 );
 }
 `;
+
+const CubeShader_VertSource = GeoVertGlsl;
+const WorldGeoShader_VertSource = GeoVertGlsl;
+const WorldGeoShader_FragSource = CubeShader_FragSource;
+const WorldGeoShader_AttribNames = ['LocalPosition'];
+
+let WorldGeoShader = null;
 
 let BlitShader = null;
 //	todo: get rid of this requirement from sokol
@@ -46,7 +52,7 @@ varying vec2 uv;
 void main()
 {
 	gl_Position = vec4(LocalPosition,1);
-	gl_Position.z = 0.99;
+	gl_Position.z = 0.999;
 	uv = LocalUv.xy;
 }
 `;
@@ -110,12 +116,6 @@ function GetScreenQuad(MinX,MinY,MaxX,MaxY,TheZ=0)
 }
 
 
-//	gr: this is very old conversion
-//		now should be named attribs when coming in
-async function CreateTriangleBuffer(RenderContext,Geometry)
-{
-}
-
 
 export async function LoadAssets(RenderContext)
 {
@@ -149,6 +149,14 @@ export async function LoadAssets(RenderContext)
 		const ShaderUniforms = ExtractShaderUniforms(VertSource,FragSource);
 		CubeShader = await RenderContext.CreateShader(VertSource,FragSource,ShaderUniforms,Cube_AttribNames);
 	}
+	
+	if ( !WorldGeoShader )
+	{
+		const FragSource = WorldGeoShader_FragSource;
+		const VertSource = WorldGeoShader_VertSource;
+		const ShaderUniforms = ExtractShaderUniforms(VertSource,FragSource);
+		WorldGeoShader = await RenderContext.CreateShader(VertSource,FragSource,ShaderUniforms,WorldGeoShader_AttribNames);
+	}
 }
 
 export function GetAssets()
@@ -159,6 +167,8 @@ export function GetAssets()
 	
 	Assets.CubeGeo = CubeTriangleBuffer;
 	Assets.CubeShader = CubeShader;
+	
+	Assets.WorldGeoShader = WorldGeoShader;
 	
 	return Assets;
 }

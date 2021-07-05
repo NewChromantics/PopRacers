@@ -22,6 +22,10 @@
 		BFC5ED38269325F600EA49EF /* PopCameraDevice.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = BF269CE926925A760077D78D /* PopCameraDevice.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		BFC5ED39269325F900EA49EF /* PopH264.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF269CF026925A7A0077D78D /* PopH264.xcframework */; };
 		BFC5ED3A269325F900EA49EF /* PopH264.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = BF269CF026925A7A0077D78D /* PopH264.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		BFC5ED3B2693C54900EA49EF /* PopCameraDevice.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF269CE926925A760077D78D /* PopCameraDevice.xcframework */; };
+		BFC5ED3C2693C54900EA49EF /* PopCameraDevice.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = BF269CE926925A760077D78D /* PopCameraDevice.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		BFC5ED3D2693C54B00EA49EF /* PopH264.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF269CF026925A7A0077D78D /* PopH264.xcframework */; };
+		BFC5ED3E2693C54B00EA49EF /* PopH264.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = BF269CF026925A7A0077D78D /* PopH264.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		BFF228672692216800AFAE52 /* PopRacersApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFF228662692216800AFAE52 /* PopRacersApp.swift */; };
 		BFF228692692216800AFAE52 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFF228682692216800AFAE52 /* ContentView.swift */; };
 		BFF2286B2692216A00AFAE52 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BFF2286A2692216A00AFAE52 /* Assets.xcassets */; };
@@ -71,7 +75,9 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				BFC5ED3C2693C54900EA49EF /* PopCameraDevice.xcframework in Embed Frameworks */,
 				BFC333E326925ED400EAFDD9 /* PopEngine.xcframework in Embed Frameworks */,
+				BFC5ED3E2693C54B00EA49EF /* PopH264.xcframework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -105,7 +111,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BFC5ED3B2693C54900EA49EF /* PopCameraDevice.xcframework in Frameworks */,
 				BFC333E226925ED400EAFDD9 /* PopEngine.xcframework in Frameworks */,
+				BFC5ED3D2693C54B00EA49EF /* PopH264.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

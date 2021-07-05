@@ -11,6 +11,8 @@ let LastXrBackgroundImage = CreateRandomImage(128,128);
 let LastXrCamera = new PopCamera();
 LastXrCamera.Position = [0,0,1.414];
 
+const WorldGeos = {};	//	[uuid] = { .Anchor=Anchor_t, .TriangleBuffer, .AttribNames }
+
 async function XrThread()
 {
 	while(true)
@@ -27,7 +29,7 @@ XrThread().catch(Pop.Warning);
 export async function LoadAssets(RenderContext)
 {
 	await SceneAssets.LoadAssets(RenderContext);
-
+	await LoadWorldGeos(RenderContext);
 }
 
 //	get render commands in current state
@@ -35,7 +37,7 @@ export function GetRenderCommands(FrameNumber)
 {
 	let Commands = [];
 	const Blue = (FrameNumber % 60)/60;
-	const ClearColour = [0,Blue,1];
+	const ClearColour = [Blue,1,0];
 	Commands.push(['SetRenderTarget',null,ClearColour]);
 	
 	
@@ -55,7 +57,7 @@ function GetSceneRenderCommands(Camera)
 	const Assets = SceneAssets.GetAssets();
 	const Commands = [];
 	
-	//if ( false )
+	if ( false )
 	{
 		const Uniforms = {};
 		Uniforms.Image = LastXrBackgroundImage;
@@ -80,9 +82,53 @@ function GetSceneRenderCommands(Camera)
 		Uniforms.CameraProjectionTransform = CameraProjectionMatrix;
 		
 		Commands.push( ['Draw',Assets.CubeGeo,Assets.CubeShader,Uniforms] );
+		
+		
+		for ( let WorldGeo of Object.values(WorldGeos) )
+		{
+			if ( !WorldGeo.TriangleBuffer )
+				continue;
+			const GeoUniforms = Object.assign({},Uniforms);
+			//GeoUniforms.LocalToWorldTransform = WorldGeo.LocalToWorld;
+			Commands.push( ['Draw',WorldGeo.TriangleBuffer,Assets.WorldGeoShader,GeoUniforms] );
+		}
+		
 	}
+	
 	
 	
 	return Commands;
 }
 
+
+
+
+async function LoadWorldGeos(RenderContext)
+{
+	//	load triangle buffers for any geo that needs it
+	for ( let Geo of Object.values(WorldGeos) )
+	{
+		if ( Geo.TriangleBuffer )
+			continue;
+		
+		const Geometry = Geo.Anchor.Geometry;
+		Geo.AttribNames = Object.keys(Geometry);
+		Geo.TriangleBuffer =  await RenderContext.CreateGeometry( Geometry, undefined );
+	}
+
+}
+
+async function UpdateWorldGeoThread()
+{
+	while ( true )
+	{
+		const NewAnchor = await Xr.WaitForNewGeometry();
+		Pop.Debug(`New World Geo`);
+		const Geo = {};
+		Geo.Anchor = NewAnchor;
+		Geo.TriangleBuffer = null;
+		Geo.AttribNames = null;
+		WorldGeos[NewAnchor.Uuid] = Geo;
+	}
+}
+UpdateWorldGeoThread().catch(Pop.Warning);

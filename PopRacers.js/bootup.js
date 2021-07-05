@@ -2,8 +2,6 @@
 import * as RenderScene from './RenderScene.js'
 //import * as Xr from './XrFrame.js'
 
-Pop.Debug(`RenderScene = ${Object.keys(RenderScene)}`);
-
 
 async function CreateMainWindowRenderContext(Window)
 {
