@@ -9,7 +9,7 @@ export default Default;
 
 let LastXrBackgroundImage = CreateRandomImage(128,128);
 let LastXrCamera = new PopCamera();
-LastXrCamera.Position = [0,0,1.414];
+LastXrCamera.Position = [0,0,0.3];
 
 const WorldGeos = {};	//	[uuid] = { .Anchor=Anchor_t, .TriangleBuffer, .AttribNames }
 
@@ -93,7 +93,7 @@ function GetSceneRenderCommands(Camera)
 				continue;
 			const GeoUniforms = Object.assign({},Uniforms);
 			GeoUniforms.LocalToWorldTransform = WorldGeo.Anchor.LocalToWorld;
-
+			
 			//	draw the plane geo
 			Commands.push( ['Draw',WorldGeo.TriangleBuffer,Assets.WorldGeoShader,GeoUniforms] );
 			//	draw a cube at its center
