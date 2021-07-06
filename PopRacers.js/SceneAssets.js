@@ -22,14 +22,23 @@ const WorldGeoShader_FragSource = `
 precision highp float;
 varying vec2 FragLocalUv;
 varying vec3 WorldPosition;
+varying vec3 WorldUp;
+
+const vec3 Blue = vec3(1,0,0);
+const vec3 Green = vec3(0,1,0);
 void main()
 {
-	gl_FragColor = vec4( FragLocalUv, 1.0, 1 );
+	bool Horizontal = abs(dot( WorldUp, vec3(0,1,0) )) > 0.5;
+	vec3 Colour = Horizontal ? Green : Blue;
+	//vec3 Colour = vec3( FragLocalUv, 1.0 );
+	//vec3 Colour = vec3( WorldPosition );
+	//vec3 Colour = (WorldUp+vec3(0.5,0.5,0.5)) / 2.0;	//	show normal
+	gl_FragColor = vec4( Colour, 1 );
 	
 	vec3 xyz = WorldPosition.xyz * 40.0;
 	xyz = fract(xyz);
 	bool x = xyz.x < 0.5;
-	bool y = xyz.z < 0.5;
+	bool y = (Horizontal ? xyz.z : xyz.y) < 0.5;
 	if ( x == y )
 		discard;
 }
@@ -71,7 +80,7 @@ varying vec2 uv;
 void main()
 {
 	gl_Position = vec4(LocalPosition,1);
-	gl_Position.z = 0.999;
+	gl_Position.z = 0.0;
 	uv = LocalUv.xy;
 }
 `;
