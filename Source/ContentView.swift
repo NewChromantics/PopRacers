@@ -7,8 +7,12 @@
 
 import SwiftUI
 
+
+
 struct ContentView: View {
 
+	@EnvironmentObject var externalDisplayContent: ExternalDisplayContent
+	
 	@State var renderView = PopEngineRenderView(name:"RenderView")
 
 

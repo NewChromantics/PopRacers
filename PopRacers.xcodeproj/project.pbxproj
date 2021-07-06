@@ -26,6 +26,8 @@
 		BFC5ED3C2693C54900EA49EF /* PopCameraDevice.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = BF269CE926925A760077D78D /* PopCameraDevice.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		BFC5ED3D2693C54B00EA49EF /* PopH264.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF269CF026925A7A0077D78D /* PopH264.xcframework */; };
 		BFC5ED3E2693C54B00EA49EF /* PopH264.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = BF269CF026925A7A0077D78D /* PopH264.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		BFC5ED462694E32800EA49EF /* ExternalContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFC5ED452694E1FE00EA49EF /* ExternalContent.swift */; };
+		BFC5ED472694E32900EA49EF /* ExternalContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFC5ED452694E1FE00EA49EF /* ExternalContent.swift */; };
 		BFF228672692216800AFAE52 /* PopRacersApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFF228662692216800AFAE52 /* PopRacersApp.swift */; };
 		BFF228692692216800AFAE52 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFF228682692216800AFAE52 /* ContentView.swift */; };
 		BFF2286B2692216A00AFAE52 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BFF2286A2692216A00AFAE52 /* Assets.xcassets */; };
@@ -91,6 +93,7 @@
 		BFC333C226925DE400EAFDD9 /* PopRacersAppClip.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PopRacersAppClip.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BFC333CD26925DE700EAFDD9 /* AppClipInfo.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = AppClipInfo.plist; sourceTree = "<group>"; };
 		BFC333CE26925DE700EAFDD9 /* PopRacers_AppClip.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = PopRacers_AppClip.entitlements; sourceTree = "<group>"; };
+		BFC5ED452694E1FE00EA49EF /* ExternalContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExternalContent.swift; sourceTree = "<group>"; };
 		BFF228632692216800AFAE52 /* PopRacers.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PopRacers.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BFF228662692216800AFAE52 /* PopRacersApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PopRacersApp.swift; sourceTree = "<group>"; };
 		BFF228682692216800AFAE52 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -162,6 +165,7 @@
 				BFF2286A2692216A00AFAE52 /* Assets.xcassets */,
 				BFF2286F2692216A00AFAE52 /* AppInfo.plist */,
 				BFF22888269223C600AFAE52 /* PopRacers-Bridging-Header.h */,
+				BFC5ED452694E1FE00EA49EF /* ExternalContent.swift */,
 			);
 			path = Source;
 			sourceTree = "<group>";
@@ -285,6 +289,7 @@
 			files = (
 				BFC333D726925EA400EAFDD9 /* PopEngineGui.swift in Sources */,
 				BFC333DB26925EA900EAFDD9 /* ContentView.swift in Sources */,
+				BFC5ED472694E32900EA49EF /* ExternalContent.swift in Sources */,
 				BFC333D926925EA700EAFDD9 /* Bridge.mm in Sources */,
 				BFC333DD26925EAB00EAFDD9 /* PopRacersApp.swift in Sources */,
 			);
@@ -296,6 +301,7 @@
 			files = (
 				BFF2288A269223C700AFAE52 /* Bridge.mm in Sources */,
 				BFF228692692216800AFAE52 /* ContentView.swift in Sources */,
+				BFC5ED462694E32800EA49EF /* ExternalContent.swift in Sources */,
 				BFF228672692216800AFAE52 /* PopRacersApp.swift in Sources */,
 				BFF2289C2692268600AFAE52 /* PopEngineGui.swift in Sources */,
 			);
