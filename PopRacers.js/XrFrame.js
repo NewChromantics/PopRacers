@@ -234,8 +234,52 @@ export async function WaitForNextFrame()
 	const LocalToWorld = ArKitToPopTransform( CameraMeta.LocalToWorld );
 	const WorldToLocal = MatrixInverse4x4(LocalToWorld);
 
-
 	Frame.Camera = new PopCamera();
+Pop.Debug(`CameraMeta.ProjectionMatrix= ${CameraMeta.ProjectionMatrix}`);
+Pop.Debug(`CameraMeta.Intrinsics= ${CameraMeta.Intrinsics}`);
+/*
+CameraMeta.ProjectionMatrix= 
+1.5933024883270264,	0,				0.015366852283477783,	0,
+0,				2.832537889480591,	-0.02082228660583496,	0,
+0,				0,					-0.9999997615814209,	-0.0009999998146668077,
+0,				0	,				-1,						0
+
+CameraMeta.Intrinsics= 
+1020.5763549804688,	0,					629.6652221679688,
+0,					1020.5763549804688,	352.0038146972656,
+0,0,1
+
+DefaultProj=
+
+0.8284271,	0,			0.5,	0,
+0,			0.828427,	0.5,	0,
+0,			0,			1.0002000,	1,
+0,			0,		-0.020002000200020003,	0
+*/
+	const p = CameraMeta.ProjectionMatrix;
+
+	const Focal = {};
+	Focal.fx = p[0];
+	Focal.s = p[1];
+	Focal.cx = p[2];
+	Focal.fy = p[5];
+	Focal.cy = -p[6];	//	flipped center y! is this image being flipped, or world?
+
+	Frame.Camera.GetOpenglFocalLengths = function( ViewRect )
+	{
+		return Focal;
+	}
+		
+/*
+	Frame.Camera.ProjectionMatrix = 
+	[
+		p[0],	p[1],	p[2],		0,
+		0,		p[5],	p[6],		0,
+		0,		0,		1.0000002000,	1,
+		0,		0,		-0.0002,	0
+		
+	];
+	*/
 	//Frame.Camera.ProjectionMatrix = CameraMeta.ProjectionMatrix;
 	/*
 	Frame.Camera.GetOpenglFocalLengths = function(ViewRect)
