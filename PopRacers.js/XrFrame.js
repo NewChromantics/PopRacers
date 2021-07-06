@@ -8,11 +8,20 @@ export default Default;
 
 class Anchor_t
 {
-	constructor(Uuid,Geometry,LocalToWorld)
+	constructor(Uuid,Triangles,LocalToWorld)
 	{
 		this.Uuid = Uuid;
 		this.LocalToWorld = LocalToWorld;
-		this.Geometry = Geometry;
+		this.Triangles = new Float32Array(Triangles);
+	}
+	
+	get Geometry()
+	{
+		const Geo = {};
+		Geo.LocalPosition = {};
+		Geo.LocalPosition.Size = 3;
+		Geo.LocalPosition.Data = this.Triangles;
+		return Geo;
 	}
 };
 
@@ -22,7 +31,7 @@ let GeometryChangedQueue = new PromiseQueue('GeometryChangedQueue');
 
 function OnFrameAnchor(FrameAnchor)
 {
-	if ( !FrameAnchor.Geometry )
+	if ( !FrameAnchor.Triangles )
 		return;
 		
 	const Uuid = FrameAnchor.Uuid;
@@ -30,49 +39,16 @@ function OnFrameAnchor(FrameAnchor)
 	if ( GeometryAnchors.hasOwnProperty( Uuid ) )
 	{
 		//	todo: check if data changed
-		return;
+		const Existing = GeometryAnchors[Uuid];
+		if ( Existing.Triangles.length == FrameAnchor.Triangles.length )
+			return;
+		Pop.Debug(`Anchor triangles were x${Existing.Triangles.length}, now ${FrameAnchor.Triangles.length}`);
 	}
 	
 	//	this transform also dictates the plane (center + up)
 	const LocalToWorld = ArKitToPopTransform(FrameAnchor.LocalToWorld);
 	
-	//	split input corners into positions, and generate a triangle fan
-	let Vertexes = [];	//	[x,y,z],
-	let CenterPosition = [0,0,0];
-	for ( let i=0;	i<FrameAnchor.Geometry.length;	i+=3 )
-	{
-		const Position = FrameAnchor.Geometry.slice(i,i+3);
-		Vertexes.push(Position);
-		CenterPosition[0] += Position[0];
-		CenterPosition[1] += Position[1];
-		CenterPosition[2] += Position[2];
-	}
-	CenterPosition[0] /= FrameAnchor.Geometry.length;
-	CenterPosition[1] /= FrameAnchor.Geometry.length;
-	CenterPosition[2] /= FrameAnchor.Geometry.length;
-	
-	//	generate triangle fan
-	const TrianglePositionData = [];
-	for ( let t=0;	t<Vertexes.length;	t++ )
-	{
-		const ai = (t+0) % Vertexes.length;
-		const bi = (t+1) % Vertexes.length;
-		const a = Vertexes[ai];
-		const b = Vertexes[bi];
-		const c = CenterPosition;
-		TrianglePositionData.push( ...a );
-		TrianglePositionData.push( ...b );
-		TrianglePositionData.push( ...c );
-	}
-		
-	
-	//	convert to pop geometry
-	const Geo = {};
-	Geo.LocalPosition = {};
-	Geo.LocalPosition.Size = 3;
-	Geo.LocalPosition.Data = new Float32Array(TrianglePositionData);
-
-	const Anchor = new Anchor_t( Uuid, Geo, LocalToWorld );
+	const Anchor = new Anchor_t( Uuid, FrameAnchor.Triangles, LocalToWorld );
 
 	GeometryAnchors[Uuid] = Anchor;
 	
@@ -235,8 +211,8 @@ export async function WaitForNextFrame()
 	const WorldToLocal = MatrixInverse4x4(LocalToWorld);
 
 	Frame.Camera = new PopCamera();
-Pop.Debug(`CameraMeta.ProjectionMatrix= ${CameraMeta.ProjectionMatrix}`);
-Pop.Debug(`CameraMeta.Intrinsics= ${CameraMeta.Intrinsics}`);
+//Pop.Debug(`CameraMeta.ProjectionMatrix= ${CameraMeta.ProjectionMatrix}`);
+//Pop.Debug(`CameraMeta.Intrinsics= ${CameraMeta.Intrinsics}`);
 /*
 CameraMeta.ProjectionMatrix= 
 1.5933024883270264,	0,				0.015366852283477783,	0,
