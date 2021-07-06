@@ -57,7 +57,7 @@ function GetSceneRenderCommands(Camera)
 	const Assets = SceneAssets.GetAssets();
 	const Commands = [];
 	
-	if ( false )
+	//if ( false )
 	{
 		const Uniforms = {};
 		Uniforms.Image = LastXrBackgroundImage;
@@ -89,8 +89,13 @@ function GetSceneRenderCommands(Camera)
 			if ( !WorldGeo.TriangleBuffer )
 				continue;
 			const GeoUniforms = Object.assign({},Uniforms);
-			//GeoUniforms.LocalToWorldTransform = WorldGeo.LocalToWorld;
+			GeoUniforms.LocalToWorldTransform = WorldGeo.Anchor.LocalToWorld;
+
+			//	draw the plane geo
 			Commands.push( ['Draw',WorldGeo.TriangleBuffer,Assets.WorldGeoShader,GeoUniforms] );
+			//	draw a cube at its center
+			Commands.push( ['Draw',Assets.CubeGeo,Assets.CubeShader,GeoUniforms] );
+		
 		}
 		
 	}
