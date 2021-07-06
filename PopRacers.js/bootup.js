@@ -2,22 +2,27 @@
 import * as RenderScene from './RenderScene.js'
 //import * as Xr from './XrFrame.js'
 
+const MainWindow = new Pop.Gui.Window(null);
 
-async function CreateMainWindowRenderContext(Window)
+
+
+
+async function CreateMainWindowRenderContext(RenderViewName)
 {
-	for ( let i=0;	i<100;	i++ )
+	for ( let i=0;	i<99999;	i++ )
 	{
 		try
 		{
-			const ViewWindow = Window;
-			const ViewName = "RenderView";
-			const RenderView = new Pop.Gui.RenderView(ViewWindow,ViewName);
+			const ViewWindow = MainWindow;
+			if ( RenderViewName != 'RenderView' )
+				throw 'x';
+			const RenderView = new Pop.Gui.RenderView(ViewWindow,RenderViewName);
 			const Sokol = new Pop.Sokol.Context(RenderView);
 			return Sokol;
 		}
 		catch(e)
 		{
-			Pop.Debug(`Failed to make render context; ${e}...`);
+			Pop.Debug(`Failed to make render context (${RenderViewName}); ${e}...`);
 			await Pop.Yield(100);
 		}
 	}
@@ -26,11 +31,13 @@ async function CreateMainWindowRenderContext(Window)
 
 
 
-async function WindowRenderThread(Window)
+async function WindowRenderThread(RenderViewName,DoRender)
 {
 	//	new sokol renderer
-	const RenderThrottleMs = 40;
-	const Sokol = await CreateMainWindowRenderContext(Window);
+	const RenderThrottleMs = 1;
+	const Sokol = await CreateMainWindowRenderContext(RenderViewName);
+
+	Pop.Debug(`Created context ${RenderViewName}`);
 
 	let FrameCount = 0;
 
@@ -51,7 +58,7 @@ async function WindowRenderThread(Window)
 		}
 	}
 }
-const MainWindow = new Pop.Gui.Window(null);
-WindowRenderThread(MainWindow).catch(Pop.Warning);
+WindowRenderThread('RenderView').catch(Pop.Warning);
+WindowRenderThread('ExternalScreen').catch(Pop.Warning);
 
 
