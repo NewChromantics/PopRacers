@@ -16,9 +16,28 @@ void main()
 }
 `;
 
+
+const WorldGeoShader_FragSource = `
+#version 100
+precision highp float;
+varying vec2 FragLocalUv;
+varying vec3 WorldPosition;
+void main()
+{
+	gl_FragColor = vec4( FragLocalUv, 1.0, 1 );
+	
+	vec3 xyz = WorldPosition.xyz * 40.0;
+	xyz = fract(xyz);
+	bool x = xyz.x < 0.5;
+	bool y = xyz.z < 0.5;
+	if ( x == y )
+		discard;
+}
+`;
+
+
 const CubeShader_VertSource = GeoVertGlsl;
 const WorldGeoShader_VertSource = GeoVertGlsl;
-const WorldGeoShader_FragSource = CubeShader_FragSource;
 const WorldGeoShader_AttribNames = ['LocalPosition'];
 
 let WorldGeoShader = null;
