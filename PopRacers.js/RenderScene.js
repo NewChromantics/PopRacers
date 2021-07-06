@@ -61,7 +61,10 @@ function GetSceneRenderCommands(Camera)
 	{
 		const Uniforms = {};
 		Uniforms.Image = LastXrBackgroundImage;
-		Commands.push( ['Draw',Assets.ScreenQuad,Assets.BlitShader,Uniforms] );
+		const State = {};
+		State.DepthRead = false;
+		State.DepthWrite = false;
+		Commands.push( ['Draw',Assets.ScreenQuad,Assets.BlitShader,Uniforms,State] );
 	}
 	
 	if ( Camera )
