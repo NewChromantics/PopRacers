@@ -23,7 +23,7 @@ async function CreateMainWindowRenderContext(RenderViewName)
 		catch(e)
 		{
 			Pop.Debug(`Failed to make render context (${RenderViewName}); ${e}...`);
-			await Pop.Yield(100);
+			await Pop.Yield(5000);
 		}
 	}
 	throw `Couldn't make render context`;

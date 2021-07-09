@@ -131,12 +131,19 @@ async function UpdateWorldGeoThread()
 	while ( true )
 	{
 		const NewAnchor = await Xr.WaitForNewGeometry();
-		Pop.Debug(`New World Geo`);
+		//Pop.Debug(`New World Geo`);
 		const Geo = {};
 		Geo.Anchor = NewAnchor;
 		Geo.TriangleBuffer = null;
 		Geo.AttribNames = null;
+		
+		if ( WorldGeos[NewAnchor.Uuid] )
+			WorldGeos[NewAnchor.Uuid].Free();
+			
 		WorldGeos[NewAnchor.Uuid] = Geo;
+		
+		//	throttle this thread
+		await Pop.Yield(100);
 	}
 }
 UpdateWorldGeoThread().catch(Pop.Warning);
