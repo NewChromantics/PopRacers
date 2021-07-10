@@ -1,7 +1,7 @@
 import {CreateCubeGeometry} from './PopEngineCommon/CommonGeometry.js'
 import {GeoVertGlsl} from './Assets/Geo.Vert.glsl.js'
 import {ExtractShaderUniforms} from './PopEngineCommon/Shaders.js'
-
+import * as BlitShaderSource from './Assets/BlitYuv.Frag.glsl.js'
 
 const Default = 'SceneAssets.js';
 export default Default;
@@ -50,52 +50,13 @@ const WorldGeoShader_VertSource = GeoVertGlsl;
 const WorldGeoShader_AttribNames = ['LocalPosition'];
 
 let WorldGeoShader = null;
-
 let BlitShader = null;
-//	todo: get rid of this requirement from sokol
-/*
-const BlitShaderUniforms = 
-[
-	{Name:'Image',Type:'sampler2D'},
-];
-*/
 let CubeShader = null;
-//	todo: get rid of this requirement from sokol
-const CubeShaderUniforms = 
-[
-	{Name:'Image',Type:'sampler2D'},
-];
 
 let ScreenQuad = null;
 let ScreenQuad_AttribNames = [];
 let CubeTriangleBuffer = null;
 let Cube_AttribNames = [];
-
-const BlitShader_VertSource =`
-#version 100
-precision highp float;
-attribute vec3 LocalUv;
-attribute vec3 LocalPosition;
-varying vec2 uv;
-void main()
-{
-	gl_Position = vec4(LocalPosition,1);
-	gl_Position.z = 0.0;
-	uv = LocalUv.xy;
-}
-`;
-
-const BlitShader_FragSource =`
-#version 100
-precision highp float;
-varying vec2 uv;
-uniform sampler2D Image;
-void main()
-{
-	gl_FragColor = texture2D( Image, vec2(uv.x,1.0-uv.y) );
-}
-`;
-
 
 
 function GetScreenQuad(MinX,MinY,MaxX,MaxY,TheZ=0)
@@ -164,8 +125,8 @@ export async function LoadAssets(RenderContext)
 
 	if ( !BlitShader && ScreenQuad )
 	{
-		const FragSource = BlitShader_FragSource;
-		const VertSource = BlitShader_VertSource;
+		const FragSource = BlitShaderSource.FragSource;
+		const VertSource = BlitShaderSource.VertSource;
 		const ShaderUniforms = ExtractShaderUniforms(VertSource,FragSource);
 		BlitShader = await RenderContext.CreateShader(VertSource,FragSource,ShaderUniforms,ScreenQuad_AttribNames);
 	}

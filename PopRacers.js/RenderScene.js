@@ -7,7 +7,7 @@ import {Camera as PopCamera} from './PopEngineCommon/Camera.js'
 const Default = 'RenderScene.js';
 export default Default;
 
-let LastXrBackgroundImage = CreateRandomImage(128,128);
+let LastXrBackgroundImagePlanes = [CreateRandomImage(128,128)];
 let LastXrCamera = new PopCamera();
 LastXrCamera.Position = [0,0,0.3];
 
@@ -18,7 +18,7 @@ async function XrThread()
 	while(true)
 	{
 		const Frame = await Xr.WaitForNextFrame();
-		LastXrBackgroundImage = Frame.Image;
+		LastXrBackgroundImagePlanes = Frame.Planes;
 		LastXrCamera = Frame.Camera;
 	}
 }
@@ -60,7 +60,9 @@ function GetSceneRenderCommands(Camera)
 	//if ( false )
 	{
 		const Uniforms = {};
-		Uniforms.Image = LastXrBackgroundImage;
+		Uniforms.Luma = LastXrBackgroundImagePlanes[0];
+		Uniforms.Plane1 = LastXrBackgroundImagePlanes[1] || Uniforms.Luma;
+		Uniforms.Plane2 = LastXrBackgroundImagePlanes[2] || Uniforms.Plane1;
 		const State = {};
 		State.DepthRead = false;
 		State.DepthWrite = false;
@@ -122,6 +124,10 @@ async function LoadWorldGeos(RenderContext)
 		const Geometry = Geo.Anchor.Geometry;
 		Geo.AttribNames = Object.keys(Geometry);
 		Geo.TriangleBuffer =  await RenderContext.CreateGeometry( Geometry, undefined );
+		Geo.Free = function()
+		{
+			RenderContext.FreeGeometry(Geo.TriangleBuffer);
+		};
 	}
 
 }
@@ -136,6 +142,7 @@ async function UpdateWorldGeoThread()
 		Geo.Anchor = NewAnchor;
 		Geo.TriangleBuffer = null;
 		Geo.AttribNames = null;
+		Geo.Free = function(){};	//	this gets filled once triangle buffer is allocated
 		
 		if ( WorldGeos[NewAnchor.Uuid] )
 			WorldGeos[NewAnchor.Uuid].Free();

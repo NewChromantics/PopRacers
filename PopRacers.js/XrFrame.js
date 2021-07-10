@@ -262,8 +262,7 @@ export async function WaitForNextFrame()
 	"Tracking":"ARTrackingStateNormal","TrackingStateReason":"ARTrackingStateReasonNone"}
 */
 	const Frame = {};
-	Frame.Image = CameraFrame.Planes[0];
-
+	Frame.Planes = CameraFrame.Planes;
 
 
 	const LocalToWorld = ArKitToPopTransform( CameraMeta.LocalToWorld );
