@@ -18,6 +18,7 @@ async function CreateMainWindowRenderContext(RenderViewName)
 				throw 'x';
 			const RenderView = new Pop.Gui.RenderView(ViewWindow,RenderViewName);
 			const Sokol = new Pop.Sokol.Context(RenderView);
+			Sokol.RenderView = RenderView;
 			return Sokol;
 		}
 		catch(e)
@@ -48,6 +49,7 @@ async function WindowRenderThread(RenderViewName,DoRender)
 			await RenderScene.LoadAssets(Sokol);
 			const Commands = RenderScene.GetRenderCommands(FrameCount);
 			await Sokol.Render(Commands);
+			RenderScene.PostRender();
 			FrameCount++;
 			await Pop.Yield(RenderThrottleMs);
 		}

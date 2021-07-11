@@ -96,7 +96,7 @@ function OnGeometryFrame(Frame)
 	}
 	
 	//	this transform also dictates the plane (center + up)
-	const LocalToWorld = ArKitToPopTransform(Frame.Meta.LocalToWorld);
+	let LocalToWorld = ArKitToPopTransform(Frame.Meta.LocalToWorld);
 	
 	const Anchor = new Anchor_t( Uuid, Triangles, TriangleDataSize, LocalToWorld );
 
@@ -121,7 +121,8 @@ async function CameraThread()
 
 			const Options = {};
 			Options.Format = 'Yuv_8_88';	//	needed to start video with "Back Camera", oops
-			Options.AnchorGeometryStream = true;
+			//Options.AnchorGeometryStream = true;
+			Options.WorldGeometryStream = true;
 			Options.Anchors = false;
 
 			const OnlyLatestFrame = true;
