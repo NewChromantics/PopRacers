@@ -19,6 +19,10 @@ async function CreateMainWindowRenderContext(RenderViewName)
 			const RenderView = new Pop.Gui.RenderView(ViewWindow,RenderViewName);
 			const Sokol = new Pop.Sokol.Context(RenderView);
 			Sokol.RenderView = RenderView;
+			Sokol.RenderView.OnMouseDown = RenderScene.OnMouseDown.bind(RenderView);
+			Sokol.RenderView.OnMouseMove = RenderScene.OnMouseMove.bind(RenderView);
+			//	until renderview gets a rect func
+			Sokol.RenderView.GetScreenRect = Sokol.GetScreenRect.bind(Sokol);
 			return Sokol;
 		}
 		catch(e)

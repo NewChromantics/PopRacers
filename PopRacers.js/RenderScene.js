@@ -1,13 +1,16 @@
 import * as SceneAssets from './SceneAssets.js'
 import * as Xr from './XrFrame.js'
 import {CreateRandomImage} from './PopEngineCommon/Images.js'
-import {CreateIdentityMatrix,MatrixInverse4x4} from './PopEngineCommon/Math.js'
+import {CreateTranslationMatrix,CreateIdentityMatrix,MatrixInverse4x4} from './PopEngineCommon/Math.js'
+import * as PopMath from './PopEngineCommon/Math.js'
 import {Camera as PopCamera} from './PopEngineCommon/Camera.js'
 import WorldGeo_t from './WorldGeo.js'
 
 const Default = 'RenderScene.js';
 export default Default;
 
+const RenderOriginCube = false;
+let RayHitCubePositions = [];
 
 const InitialXrFrame = {};
 InitialXrFrame.Camera = new PopCamera();
@@ -118,8 +121,16 @@ function GetSceneRenderCommands(Camera)
 		Uniforms.WorldToCameraTransform = WorldToCameraMatrix;
 		Uniforms.CameraProjectionTransform = CameraProjectionMatrix;
 		
-		Commands.push( ['Draw',Assets.CubeGeo,Assets.CubeShader,Uniforms] );
-		
+		if ( RenderOriginCube )
+		{
+			Commands.push( ['Draw',Assets.CubeGeo,Assets.CubeShader,Uniforms] );
+		}
+		for ( let CubePosition of RayHitCubePositions )
+		{
+			const GeoUniforms = Object.assign({},Uniforms);
+			GeoUniforms.LocalToWorldTransform = CreateTranslationMatrix(...CubePosition);
+			Commands.push( ['Draw',Assets.CubeGeo,Assets.CubeShader,GeoUniforms] );
+		}
 		
 		for ( let WorldGeo of Object.values(WorldGeos) )
 		{
@@ -127,7 +138,7 @@ function GetSceneRenderCommands(Camera)
 				continue;
 			const GeoUniforms = Object.assign({},Uniforms);
 			GeoUniforms.LocalToWorldTransform = WorldGeo.LocalToWorld;
-			
+
 			//	draw the plane geo
 			Commands.push( ['Draw',WorldGeo.TriangleBuffer,Assets.WorldGeoShader,GeoUniforms] );
 			//	draw a cube at its center
@@ -173,3 +184,42 @@ async function UpdateWorldGeoThread()
 	}
 }
 UpdateWorldGeoThread().catch(Pop.Warning);
+
+
+
+function CreateRayCube(u,v,Camera)
+{
+	//	get ray from camrea
+	const ViewRect = [0,0,1,1];
+	const WorldRay = Camera.GetScreenRay(u,v,ViewRect);
+	const Distance = 0.10;
+	const Forward = PopMath.Multiply3( WorldRay.Direction, [Distance,Distance,Distance] );
+	const InFront = PopMath.Add3( WorldRay.Start, Forward );
+	
+	//	raycast to geometry	
+	
+	RayHitCubePositions.push( InFront );
+}
+
+export function OnMouseDown(x,y,Button)
+{
+	//	todo: get correct camera for mouse source
+	const Frame = GetXrFrame();
+	const RenderView = this;
+	
+	if ( Button == 'Left' )
+	{
+		const Camera = Frame.Camera;
+		const Rect = RenderView.GetScreenRect();
+		let u = PopMath.Range( Rect[0], Rect[0]+Rect[2], x );
+		let v = PopMath.Range( Rect[1], Rect[1]+Rect[3], y );
+		//	flip, same as shader, need to get a proper rotation from camera/frame
+		v = 1 - v;
+		CreateRayCube( u, v, Camera );
+	}
+}
+
+export function OnMouseMove(x,y,Button)
+{
+	OnMouseDown.call( this, ...arguments);
+}

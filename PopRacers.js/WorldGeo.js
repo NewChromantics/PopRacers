@@ -29,30 +29,12 @@ export default class WorldGeo_t
 	
 	IsHorizontal()
 	{
-		const Normal = this.Normal;
-		const WorldUp = [0,1,0];
-		const Dot = Math.abs( Dot3( Normal, WorldUp ) );
-		return Dot > 0.5;
+		return this.Anchor.IsHorizontal();
 	}
 	
 	get Normal()
 	{
-		if ( !this.NormalCache )
-			this.NormalCache = this.GetNormal();
-		return this.NormalCache;
-	}
-	
-	GetNormal()
-	{
-		//	probably should cache this
-		//	gr: seems to fail with .w=0 so backup with world space subtraction
-		let Up = [0,1,0,1];
-		let Zero = [0,0,0,1];
-		const WorldUp = TransformPosition( Up, this.LocalToWorld );
-		const WorldZero = TransformPosition( Zero, this.LocalToWorld );
-		const Normal = Normalise3( Subtract3( WorldUp, WorldZero ) );
-		//	need to div/w?
-		return Normal;
+		return this.Anchor.Normal;
 	}
 	
 	get LocalToWorld()

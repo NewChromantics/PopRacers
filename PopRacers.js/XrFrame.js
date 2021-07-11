@@ -1,9 +1,12 @@
 import PromiseQueue from './PopEngineCommon/PromiseQueue.js'
 import PopCamera from './PopEngineCommon/Camera.js'
 import {CreateIdentityMatrix,MatrixInverse4x4,GetMatrixTransposed} from './PopEngineCommon/Math.js'
+import {TransformPosition,Subtract3,Normalise3,Dot3} from './PopEngineCommon/Math.js'
 
 const Default = 'XrFrame.js';
 export default Default;
+
+const IncludeNonHorizontalAnchors = false;
 
 
 class Anchor_t
@@ -24,38 +27,39 @@ class Anchor_t
 		Geo.LocalPosition.Data = this.Triangles;
 		return Geo;
 	}
+	
+	IsHorizontal()
+	{
+		const Normal = this.Normal;
+		const WorldUp = [0,1,0];
+		const Dot = Math.abs( Dot3( Normal, WorldUp ) );
+		return Dot > 0.5;
+	}
+	
+	get Normal()
+	{
+		if ( !this.NormalCache )
+			this.NormalCache = this.GetNormal();
+		return this.NormalCache;
+	}
+	
+	GetNormal()
+	{
+		//	probably should cache this
+		//	gr: seems to fail with .w=0 so backup with world space subtraction
+		let Up = [0,1,0,1];
+		let Zero = [0,0,0,1];
+		const WorldUp = TransformPosition( Up, this.LocalToWorld );
+		const WorldZero = TransformPosition( Zero, this.LocalToWorld );
+		const Normal = Normalise3( Subtract3( WorldUp, WorldZero ) );
+		//	need to div/w?
+		return Normal;
+	}
 };
 
 let GeometryAnchors = {};	//	[uuid] = Anchor_t
 
 let GeometryChangedQueue = new PromiseQueue('GeometryChangedQueue');
-
-function OnFrameAnchor(FrameAnchor)
-{
-	if ( !FrameAnchor.Triangles )
-		return;
-		
-	const Uuid = FrameAnchor.Uuid;
-		
-	if ( GeometryAnchors.hasOwnProperty( Uuid ) )
-	{
-		//	todo: check if data changed
-		const Existing = GeometryAnchors[Uuid];
-		if ( Existing.Triangles.length == FrameAnchor.Triangles.length )
-			return;
-		Pop.Debug(`Anchor(${Uuid}) triangles were x${Existing.Triangles.length}, now ${FrameAnchor.Triangles.length}`);
-	}
-	
-	//	this transform also dictates the plane (center + up)
-	const LocalToWorld = ArKitToPopTransform(FrameAnchor.LocalToWorld);
-	
-	const Anchor = new Anchor_t( Uuid, FrameAnchor.Triangles, 3, LocalToWorld );
-
-	GeometryAnchors[Uuid] = Anchor;
-	
-	GeometryChangedQueue.Push( Anchor );
-	//Got frame {"TimeMs":2022815597,"Meta":{"Anchors":[{"Geometry":[0.16923083364963531,0,0.1461537927389145,0.1961539089679718,0,0.08076918125152588,0.23846149444580078,0,-0.20769236981868744,0.24615372717380524,0,-0.3192308247089386,0.2269229292869568,0,-0.36538466811180115,-0.4230770170688629,0,-0.365384578704834,-0.46923086047172546,0,-0.34615379571914673,-0.38076916337013245,0,-0.00384607445448637,-0.34230759739875793,0,0.08846162259578705,-0.173076793551445,0,0.23461543023586273,-0.1076921746134758,0,0.26153847575187683],"LocalToWorld":[0.9193618893623352,0,-0.39341288805007935,0.05083607882261276,0,1,0,-0.18727344274520874,0.39341288805007935,0,0.9193618893623352,-0.33883318305015564,0,0,0,1],"SessionUuid":"FFA80CCF-164F-CCEF-0057-F330E9B03310","Uuid":"BAAC57FB-C769-44E7-A429-4EAF02FDF4CF"}],"Camera":{"Intrinsics":[1023.16455078125,0,629.5697021484375,0,1023.16455078125,352.0920104980469,0,0,1],"IntrinsicsCameraResolution":[1280,720],"LocalEulerRadians":[-0.48367640376091003,-0.0015200200723484159,-0.004942567087709904],"LocalToWorld":[0.9999830722808838,0.00564939808100462,-0.0013456600718200207,-0.0015735775232315063,-0.004375593736767769,0.8852804899215698,0.4650369882583618,0.00027070194482803345,0.0038184644654393196,-0.4650232493877411,0.8852903246879578,0.0015573576092720032,0,0,0,1],"ProjectionMatrix":[1.5986945629119873,0,0.015516102313995361,0,0,2.8421237468719482,-0.02057778835296631,0,0,0,-0.9999997615814209,-0.0009999998146668077,0,0,-1,0],"Tracking":"ARTrackingStateNormal","TrackingStateReason":"ARTrackingStateReasonNone"},"FeatureCount":6,"LightIntensity":655.3710699081421,"LightTemperature":4080.36572265625,"PendingFrames":1,"Planes":[{"Channels":1,"DataSize":921600,"Format":"Greyscale","Height":720,"Width":1280},{"Channels":2,"DataSize":460800,"Format":"ChromaUV_88","Height":360,"Width":640}],"StreamName":"RearColour","WorldMappingStatus":[65,82,87,111,114,108,100,77,97,112,112,105,110,103,83,116,97,116,117,115,78,111,116,65,118,97,105,108,97,98,108,101]},"Planes":[{},{}],"PendingFrames":0}
-}
 
 function GetComponentCount(Format)
 {
@@ -99,11 +103,15 @@ function OnGeometryFrame(Frame)
 	let LocalToWorld = ArKitToPopTransform(Frame.Meta.LocalToWorld);
 	
 	const Anchor = new Anchor_t( Uuid, Triangles, TriangleDataSize, LocalToWorld );
+	//	skip non horizontal anchors
+	if ( !IncludeNonHorizontalAnchors )
+		if ( !Anchor.IsHorizontal() )
+			return;
 
 	GeometryAnchors[Uuid] = Anchor;
 	
 	GeometryChangedQueue.Push( Anchor );
-	//Pop.Debug(`Got geometry frame; ${JSON.stringify(Frame.Meta)}`);
+	Pop.Debug(`Got geometry frame; ${JSON.stringify(Frame.Meta)}`);
 }
 
 
@@ -121,8 +129,8 @@ async function CameraThread()
 
 			const Options = {};
 			Options.Format = 'Yuv_8_88';	//	needed to start video with "Back Camera", oops
-			//Options.AnchorGeometryStream = true;
-			Options.WorldGeometryStream = true;
+			Options.AnchorGeometryStream = true;
+			//Options.WorldGeometryStream = true;
 			Options.Anchors = false;
 
 			const OnlyLatestFrame = true;
@@ -138,11 +146,6 @@ async function CameraThread()
 					OnGeometryFrame(Frame);
 					continue;
 				}
-				
-				//	old geometry anchors
-				if ( Frame.Meta.Anchors )
-					Frame.Meta.Anchors.forEach( OnFrameAnchor );
-				
 				CameraFrameQueue.Push(Frame);
 			}
 		}
