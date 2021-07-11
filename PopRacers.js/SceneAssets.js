@@ -1,5 +1,5 @@
 import {CreateCubeGeometry} from './PopEngineCommon/CommonGeometry.js'
-import {GeoVertGlsl} from './Assets/Geo.Vert.glsl.js'
+import GeoVertGlsl from './Assets/Geo.Vert.glsl.js'
 import {ExtractShaderUniforms} from './PopEngineCommon/Shaders.js'
 import * as BlitShaderSource from './Assets/BlitYuv.Frag.glsl.js'
 
@@ -117,7 +117,7 @@ export async function LoadAssets(RenderContext)
 
 	if ( !CubeTriangleBuffer )
 	{
-		const CubeSize = 0.01;
+		const CubeSize = 0.015;
 		const Geometry = CreateCubeGeometry(-CubeSize,CubeSize);
 		CubeTriangleBuffer = await RenderContext.CreateGeometry(Geometry,undefined);
 		Cube_AttribNames = Object.keys(Geometry);

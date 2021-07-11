@@ -1,3 +1,4 @@
+import Pop from './PopEngineCommon/PopEngine.js'
 import PromiseQueue from './PopEngineCommon/PromiseQueue.js'
 import PopCamera from './PopEngineCommon/Camera.js'
 import {CreateIdentityMatrix,MatrixInverse4x4,GetMatrixTransposed} from './PopEngineCommon/Math.js'
@@ -9,14 +10,15 @@ export default Default;
 const IncludeNonHorizontalAnchors = false;
 
 
-class Anchor_t
+export class Anchor_t
 {
-	constructor(Uuid,Triangles,TriangleDataSize,LocalToWorld)
+	constructor(Uuid,Triangles,TriangleDataSize,LocalToWorld,Meta)
 	{
 		this.Uuid = Uuid;
 		this.LocalToWorld = LocalToWorld;
 		this.Triangles = new Float32Array(Triangles);
 		this.TriangleDataSize = TriangleDataSize;
+		this.Meta = Meta;
 	}
 	
 	get Geometry()
@@ -71,6 +73,14 @@ function GetComponentCount(Format)
 	throw `Unhandled component count for format ${Format}`;
 }
 
+//	Anchor_t
+export function AddGeometryAnchor(Anchor)
+{
+	const Uuid = Anchor.Meta.AnchorUuid;
+	GeometryAnchors[Uuid] = Anchor;
+	GeometryChangedQueue.Push( Anchor );
+}
+
 function OnGeometryFrame(Frame)
 {
 	//	{"AnchorName":"",
@@ -102,15 +112,13 @@ function OnGeometryFrame(Frame)
 	//	this transform also dictates the plane (center + up)
 	let LocalToWorld = ArKitToPopTransform(Frame.Meta.LocalToWorld);
 	
-	const Anchor = new Anchor_t( Uuid, Triangles, TriangleDataSize, LocalToWorld );
+	const Anchor = new Anchor_t( Uuid, Triangles, TriangleDataSize, LocalToWorld, Frame.Meta );
 	//	skip non horizontal anchors
 	if ( !IncludeNonHorizontalAnchors )
 		if ( !Anchor.IsHorizontal() )
 			return;
 
-	GeometryAnchors[Uuid] = Anchor;
-	
-	GeometryChangedQueue.Push( Anchor );
+	OnGeometryAnchor(Anchor);
 	Pop.Debug(`Got geometry frame; ${JSON.stringify(Frame.Meta)}`);
 }
 

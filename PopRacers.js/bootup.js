@@ -1,8 +1,14 @@
+import Pop from './PopEngineCommon/PopEngine.js'
+
+//	allow use as module on web...
+const Default = 'Bootup.js Module';
+export default Default;
 
 import * as RenderScene from './RenderScene.js'
 //import * as Xr from './XrFrame.js'
 
-const MainWindow = new Pop.Gui.Window(null);
+//	gr: for now prevent creation of window on web
+const MainWindow = Pop.GetPlatform()=='Web' ? null : new Pop.Gui.Window(null);
 
 
 
@@ -21,6 +27,7 @@ async function CreateMainWindowRenderContext(RenderViewName)
 			Sokol.RenderView = RenderView;
 			Sokol.RenderView.OnMouseDown = RenderScene.OnMouseDown.bind(RenderView);
 			Sokol.RenderView.OnMouseMove = RenderScene.OnMouseMove.bind(RenderView);
+			Sokol.RenderView.OnMouseScroll = RenderScene.OnMouseScroll.bind(RenderView);
 			//	until renderview gets a rect func
 			Sokol.RenderView.GetScreenRect = Sokol.GetScreenRect.bind(Sokol);
 			return Sokol;
@@ -67,4 +74,9 @@ async function WindowRenderThread(RenderViewName,DoRender)
 WindowRenderThread('RenderView').catch(Pop.Warning);
 WindowRenderThread('ExternalScreen').catch(Pop.Warning);
 
+
+if ( Pop.GetPlatform()=='Web' )
+{
+	RenderScene.CreateTestPlane();
+}
 

@@ -1,3 +1,4 @@
+import Pop from './PopEngineCommon/PopEngine.js'
 import * as SceneAssets from './SceneAssets.js'
 import * as Xr from './XrFrame.js'
 import {CreateRandomImage} from './PopEngineCommon/Images.js'
@@ -5,6 +6,7 @@ import {CreateTranslationMatrix,CreateIdentityMatrix,MatrixInverse4x4} from './P
 import * as PopMath from './PopEngineCommon/Math.js'
 import {Camera as PopCamera} from './PopEngineCommon/Camera.js'
 import WorldGeo_t from './WorldGeo.js'
+import {CreateQuad3Geometry} from './PopEngineCommon/CommonGeometry.js'
 
 const Default = 'RenderScene.js';
 export default Default;
@@ -14,8 +16,8 @@ let RayHitCubePositions = [];
 
 const InitialXrFrame = {};
 InitialXrFrame.Camera = new PopCamera();
-InitialXrFrame.Camera.Position = [0,0,0.3];
-InitialXrFrame.Planes = [CreateRandomImage(128,128)];
+InitialXrFrame.Camera.Position = [0,0.3,0.3];
+InitialXrFrame.Planes = [CreateRandomImage(512,512)];
 
 //	pending
 let XrFrames = [InitialXrFrame];	//	always keep one to render
@@ -142,7 +144,7 @@ function GetSceneRenderCommands(Camera)
 			//	draw the plane geo
 			Commands.push( ['Draw',WorldGeo.TriangleBuffer,Assets.WorldGeoShader,GeoUniforms] );
 			//	draw a cube at its center
-			Commands.push( ['Draw',Assets.CubeGeo,Assets.CubeShader,GeoUniforms] );
+			//Commands.push( ['Draw',Assets.CubeGeo,Assets.CubeShader,GeoUniforms] );
 		
 		}
 		
@@ -185,7 +187,16 @@ async function UpdateWorldGeoThread()
 }
 UpdateWorldGeoThread().catch(Pop.Warning);
 
-
+function RayCastToWorldGeos(WorldRay)
+{
+	for ( let WorldGeo of Object.values(WorldGeos) )
+	{
+		const Intersection = WorldGeo.GetRaycastHit(WorldRay);
+		if ( Intersection )
+			return Intersection;
+	}
+	return null;
+}
 
 function CreateRayCube(u,v,Camera)
 {
@@ -193,15 +204,18 @@ function CreateRayCube(u,v,Camera)
 	const ViewRect = [0,0,1,1];
 	const WorldRay = Camera.GetScreenRay(u,v,ViewRect);
 	const Distance = 0.10;
-	const Forward = PopMath.Multiply3( WorldRay.Direction, [Distance,Distance,Distance] );
-	const InFront = PopMath.Add3( WorldRay.Start, Forward );
+	const InFront = PopMath.GetRayPositionAtTime( WorldRay.Position, WorldRay.Direction, Distance );
 	
-	//	raycast to geometry	
+	//	raycast to geometry
+	const Hit = RayCastToWorldGeos( WorldRay );
+	Pop.Debug(`RayCast hit=${Hit}`);
+	if ( !Hit )
+		return;
 	
-	RayHitCubePositions.push( InFront );
+	RayHitCubePositions.push( Hit );
 }
 
-export function OnMouseDown(x,y,Button)
+export function OnMouseMove(x,y,Button,FirstDown=false)
 {
 	//	todo: get correct camera for mouse source
 	const Frame = GetXrFrame();
@@ -214,12 +228,50 @@ export function OnMouseDown(x,y,Button)
 		let u = PopMath.Range( Rect[0], Rect[0]+Rect[2], x );
 		let v = PopMath.Range( Rect[1], Rect[1]+Rect[3], y );
 		//	flip, same as shader, need to get a proper rotation from camera/frame
-		v = 1 - v;
+		//	gr: sort this out!
+		if ( Pop.GetPlatform() != 'Web' )
+		{
+			v = 1 - v;
+		}
 		CreateRayCube( u, v, Camera );
+	}
+	
+	if ( Button == 'Right' )
+	{
+		//	pan horz
+		const Camera = GetXrFrame().Camera;
+		let MoveScale = 0.1;
+		Camera.OnCameraPanLocal( -x*MoveScale, 0, y*MoveScale, FirstDown );
 	}
 }
 
-export function OnMouseMove(x,y,Button)
+export function OnMouseDown(x,y,Button)
 {
-	OnMouseDown.call( this, ...arguments);
+	const FirstDown = true;
+	OnMouseMove.call( this, ...arguments, FirstDown );
+}
+
+export function OnMouseScroll(x,y,Button,Delta)
+{
+	const Camera = GetXrFrame().Camera;
+	let Fly = Delta[1] * 10;
+	//Fly *= Params.ScrollFlySpeed;
+			
+	Camera.OnCameraPanLocal( 0, 0, 0, true );
+	Camera.OnCameraPanLocal( 0, 0, -Fly, false );
+}
+
+export function CreateTestPlane()
+{
+	const Quad = CreateQuad3Geometry();
+	const LocalToWorld = PopMath.CreateIdentityMatrix();
+	const Triangles = Quad.LocalPosition.Data;
+	const TriangleDataSize = Quad.LocalPosition.Size;
+	//	Anchor_t
+	const Meta = {};
+	Meta.AnchorUuid = 'TestPlane';
+	Meta.AnchorType = 'ARPlaneAnchor';
+	const Anchor = new Xr.Anchor_t( Meta.AnchorUuid,Triangles,TriangleDataSize,LocalToWorld,Meta);
+
+	Xr.AddGeometryAnchor(Anchor);
 }

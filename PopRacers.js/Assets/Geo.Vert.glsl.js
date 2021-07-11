@@ -1,4 +1,4 @@
-export default const GeoVertGlsl = `
+export const GeoVertGlsl = `
 #version 100
 precision highp float;
 
@@ -38,3 +38,4 @@ void main()
 
 
 `;
+export default GeoVertGlsl;

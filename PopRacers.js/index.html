@@ -1,0 +1,34 @@
+<html>
+<head>
+
+<style>
+
+/* easy fullscreen with flex! */
+body
+{
+	display:		flex;
+	flex-direction:	column;
+	padding:		0px;
+	margin:			0px;
+	flex-wrap:		nowrap;
+	align-items:	stretch;
+	align-content:	stretch;
+}
+
+canvas
+{
+	width: 100%;
+	height: 100%;
+}
+</style>
+
+</head>
+
+<body>
+<canvas id="RenderView"></canvas>
+<script type="Module">
+import * as Bootup from './bootup.js';
+</script>
+
+</body>
+</html>
