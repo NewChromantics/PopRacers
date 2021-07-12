@@ -16,7 +16,8 @@ let RayHitCubePositions = [];
 
 const InitialXrFrame = {};
 InitialXrFrame.Camera = new PopCamera();
-InitialXrFrame.Camera.Position = [0,0.3,0.3];
+InitialXrFrame.Camera.Position = [0,0.2,0.3];
+InitialXrFrame.Camera.FovVertical = 60;
 InitialXrFrame.Planes = [CreateRandomImage(512,512)];
 
 //	pending
@@ -68,7 +69,7 @@ export async function LoadAssets(RenderContext)
 }
 
 //	get render commands in current state
-export function GetRenderCommands(FrameNumber)
+export function GetRenderCommands(FrameNumber,ScreenRect)
 {
 	let Commands = [];
 	const Blue = (FrameNumber % 60)/60;
@@ -79,8 +80,9 @@ export function GetRenderCommands(FrameNumber)
 	
 	{
 		let Camera = GetXrFrame().Camera;
+		
 		//let Camera = null;
-		let SceneCommands = GetSceneRenderCommands(Camera);
+		let SceneCommands = GetSceneRenderCommands(Camera,ScreenRect);
 		Commands.push( ...SceneCommands );
 	}
 	
@@ -88,7 +90,7 @@ export function GetRenderCommands(FrameNumber)
 }
 
 
-function GetSceneRenderCommands(Camera)
+function GetSceneRenderCommands(Camera,ScreenRect)
 {
 	const Assets = SceneAssets.GetAssets();
 	const Commands = [];
@@ -111,8 +113,10 @@ function GetSceneRenderCommands(Camera)
 		const Uniforms = {};
 		
 		//const RenderTargetRect = [0,0,1280,720];
-		const RenderTargetRect = [0,0,1,1];
+		//const RenderTargetRect = [0,0,1,1];
 		//const RenderTargetRect = [0,0,1,720/1280];
+		const RenderTargetRect = [0,0,1,ScreenRect[3]/ScreenRect[2]];
+		//Pop.Debug(`RenderTargetRect=${RenderTargetRect}`);
 		const WorldToCameraMatrix = Camera.GetWorldToCameraMatrix();
 		const CameraProjectionMatrix = Camera.GetProjectionMatrix( RenderTargetRect );
 		const CameraToWorldTransform = MatrixInverse4x4( WorldToCameraMatrix );
@@ -198,11 +202,13 @@ function RayCastToWorldGeos(WorldRay)
 	return null;
 }
 
-function CreateRayCube(u,v,Camera)
+function CreateRayCube(u,v,Camera,ScreenRect)
 {
 	//	get ray from camrea
-	const ViewRect = [0,0,1,1];
-	const WorldRay = Camera.GetScreenRay(u,v,ViewRect);
+	//const ViewRect = [0,0,1,1];
+	const RenderTargetRect = [0,0,1,ScreenRect[3]/ScreenRect[2]];
+		
+	const WorldRay = Camera.GetScreenRay(u,v,RenderTargetRect);
 	const Distance = 0.10;
 	const InFront = PopMath.GetRayPositionAtTime( WorldRay.Position, WorldRay.Direction, Distance );
 	
@@ -233,7 +239,7 @@ export function OnMouseMove(x,y,Button,FirstDown=false)
 		{
 			v = 1 - v;
 		}
-		CreateRayCube( u, v, Camera );
+		CreateRayCube( u, v, Camera, Rect );
 	}
 	
 	if ( Button == 'Right' )

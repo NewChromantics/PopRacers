@@ -48,7 +48,8 @@ async function WindowRenderThread(RenderViewName,DoRender)
 	//	new sokol renderer
 	const RenderThrottleMs = 1;
 	const Sokol = await CreateMainWindowRenderContext(RenderViewName);
-
+	const RenderView = Sokol.RenderView;
+	
 	Pop.Debug(`Created context ${RenderViewName}`);
 
 	let FrameCount = 0;
@@ -57,8 +58,9 @@ async function WindowRenderThread(RenderViewName,DoRender)
 	{
 		try
 		{
+			const ScreenRect = RenderView.GetScreenRect();
 			await RenderScene.LoadAssets(Sokol);
-			const Commands = RenderScene.GetRenderCommands(FrameCount);
+			const Commands = RenderScene.GetRenderCommands(FrameCount,ScreenRect);
 			await Sokol.Render(Commands);
 			RenderScene.PostRender();
 			FrameCount++;
