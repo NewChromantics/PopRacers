@@ -7,12 +7,13 @@ import * as PopMath from './PopEngineCommon/Math.js'
 import {Camera as PopCamera} from './PopEngineCommon/Camera.js'
 import WorldGeo_t from './WorldGeo.js'
 import {CreateQuad3Geometry} from './PopEngineCommon/CommonGeometry.js'
+import * as RaceTrack from './RaceTrack.js'
+
 
 const Default = 'RenderScene.js';
 export default Default;
 
 const RenderOriginCube = false;
-let RayHitCubePositions = [];
 
 const InitialXrFrame = {};
 InitialXrFrame.Camera = new PopCamera();
@@ -131,12 +132,9 @@ function GetSceneRenderCommands(Camera,ScreenRect)
 		{
 			Commands.push( ['Draw',Assets.CubeGeo,Assets.CubeShader,Uniforms] );
 		}
-		for ( let CubePosition of RayHitCubePositions )
-		{
-			const GeoUniforms = Object.assign({},Uniforms);
-			GeoUniforms.LocalToWorldTransform = CreateTranslationMatrix(...CubePosition);
-			Commands.push( ['Draw',Assets.CubeGeo,Assets.CubeShader,GeoUniforms] );
-		}
+		
+		const RaceRenderCommands = RaceTrack.GetRenderCommands(Uniforms,Camera,Assets);
+		Commands.push( ...RaceRenderCommands );
 		
 		for ( let WorldGeo of Object.values(WorldGeos) )
 		{
@@ -202,7 +200,7 @@ function RayCastToWorldGeos(WorldRay)
 	return null;
 }
 
-function CreateRayCube(u,v,Camera,ScreenRect)
+function CreateRayCube(u,v,FirstDown,Camera,ScreenRect)
 {
 	//	get ray from camrea
 	//const ViewRect = [0,0,1,1];
@@ -214,11 +212,11 @@ function CreateRayCube(u,v,Camera,ScreenRect)
 	
 	//	raycast to geometry
 	const Hit = RayCastToWorldGeos( WorldRay );
-	Pop.Debug(`RayCast hit=${Hit}`);
+	//Pop.Debug(`RayCast hit=${Hit}`);
 	if ( !Hit )
 		return;
 	
-	RayHitCubePositions.push( Hit );
+	RaceTrack.OnClickMap( Hit, FirstDown );
 }
 
 export function OnMouseMove(x,y,Button,FirstDown=false)
@@ -239,7 +237,7 @@ export function OnMouseMove(x,y,Button,FirstDown=false)
 		{
 			v = 1 - v;
 		}
-		CreateRayCube( u, v, Camera, Rect );
+		CreateRayCube( u, v, FirstDown, Camera, Rect );
 	}
 	
 	if ( Button == 'Right' )

@@ -75,7 +75,7 @@ export default class WorldGeo_t
 		//	and center is x,y,z, plane D must be Y
 		//	so... should we be able to extract it from local000?
 		Plane[3] = WorldCenter[1];
-		Pop.Debug(`Plane=${Plane}`);
+		//Pop.Debug(`Plane=${Plane}`);
 		
 		
 		const Intersection = PopMath.GetPlaneIntersection( WorldRay.Position, WorldRay.Direction, Plane );

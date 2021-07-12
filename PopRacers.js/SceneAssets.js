@@ -16,6 +16,20 @@ void main()
 }
 `;
 
+const TrackShader_FragSource = `
+#version 100
+precision highp float;
+varying vec2 FragLocalUv;
+uniform bool Selected;
+void main()
+{
+	//	dark
+	gl_FragColor = vec4( FragLocalUv*0.5, 0.5, 1 );
+	if ( Selected )
+		gl_FragColor.x = 1.0;
+}
+`;
+
 
 const WorldGeoShader_FragSource = `
 #version 100
@@ -46,12 +60,14 @@ void main()
 
 
 const CubeShader_VertSource = GeoVertGlsl;
+const TrackShader_VertSource = GeoVertGlsl;
 const WorldGeoShader_VertSource = GeoVertGlsl;
 const WorldGeoShader_AttribNames = ['LocalPosition'];
 
 let WorldGeoShader = null;
 let BlitShader = null;
 let CubeShader = null;
+let TrackShader = null;
 
 let ScreenQuad = null;
 let ScreenQuad_AttribNames = [];
@@ -139,6 +155,14 @@ export async function LoadAssets(RenderContext)
 		CubeShader = await RenderContext.CreateShader(VertSource,FragSource,ShaderUniforms,Cube_AttribNames);
 	}
 	
+	if ( !TrackShader && CubeTriangleBuffer )
+	{
+		const FragSource = TrackShader_FragSource;
+		const VertSource = TrackShader_VertSource;
+		const ShaderUniforms = ExtractShaderUniforms(VertSource,FragSource);
+		TrackShader = await RenderContext.CreateShader(VertSource,FragSource,ShaderUniforms,Cube_AttribNames);
+	}
+	
 	if ( !WorldGeoShader )
 	{
 		const FragSource = WorldGeoShader_FragSource;
@@ -156,6 +180,7 @@ export function GetAssets()
 	
 	Assets.CubeGeo = CubeTriangleBuffer;
 	Assets.CubeShader = CubeShader;
+	Assets.TrackShader = TrackShader;
 	
 	Assets.WorldGeoShader = WorldGeoShader;
 	
