@@ -68,6 +68,8 @@ uniform vec3 StartWorldPosition;
 uniform vec3 EndWorldPosition;
 
 const float TrackWidth = 0.01;
+const float DashWidth = TrackWidth * 0.2;
+const float DashInset = DashWidth;
 
 float TimeAlongLine2(vec2 Position,vec2 Start,vec2 End)
 {
@@ -106,12 +108,35 @@ float GetDistanceToTrack()
 
 void main()
 {
+	float DistanceAlongLine = FragLocalUv.y * length(EndWorldPosition-StartWorldPosition);
+
 	float Distance = GetDistanceToTrack();
 	if ( Distance > TrackWidth )
 		discard;
 	//	dark
 	//gl_FragColor = vec4( FragLocalUv*1.0, 0.0, 1 );
 	gl_FragColor = vec4( 0, 0, 0, 1 );
+	
+	//	edge lines
+	float HalfDashWidth = DashWidth * 0.5;
+	/*
+	if ( Distance < TrackWidth - DashInset + HalfDashWidth &&
+		Distance > TrackWidth - DashInset - HalfDashWidth )
+	{
+		gl_FragColor = vec4( 1, 1, 1, 1 );
+	}
+*/
+	//	center lines
+	if ( Distance < HalfDashWidth )
+	{
+		//	dash them
+		float RepeatEvery = 0.02;
+		float DashScalar = 1.0 / RepeatEvery;
+		if ( fract(DistanceAlongLine*DashScalar) < 0.5 )
+			gl_FragColor = vec4( 1, 1, 1, 1 );
+	}
+	
+	
 	if ( Selected )
 	{
 		float DistanceToStart = length( StartWorldPosition - WorldPosition );
