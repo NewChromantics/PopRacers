@@ -84,13 +84,31 @@ export function OnClickMap(WorldPos,FirstDown)
 export function GetRenderCommands(CameraUniforms,Camera,Assets)
 {
 	let Commands = [];
+	
+	//	make track lines
+	for ( let t=0;	t<TrackPoints.length;	t++ )
+	{
+		const This = TrackPoints[t];
+		const Next = TrackPoints[(t+1)%TrackPoints.length];
+		
+		const Uniforms = Object.assign({},CameraUniforms);
+		Uniforms.StartWorldPosition = This.Position.slice();
+		Uniforms.EndWorldPosition = Next.Position.slice();
+		Uniforms.StartWorldPosition[1] += 0.001;
+		Uniforms.EndWorldPosition[1] += 0.001;
+		Uniforms.Selected = This.Selected;
+		Commands.push( ['Draw',Assets.TrackQuadGeo,Assets.TrackShader,Uniforms] );
+	}
+/*	
 	for ( let TrackPoint of TrackPoints )
 	{
 		const Uniforms = Object.assign({},CameraUniforms);
-		const Position = TrackPoint.Position;
+		const Position = TrackPoint.Position.slice();
+		Position[1] += 0.001;
 		Uniforms.LocalToWorldTransform = PopMath.CreateTranslationMatrix(...Position);
 		Uniforms.Selected = TrackPoint.Selected;
-		Commands.push( ['Draw',Assets.CubeGeo,Assets.TrackShader,Uniforms] );
+		Commands.push( ['Draw',Assets.TrackQuadGeo,Assets.TrackShader,Uniforms] );
 	}
+	*/
 	return Commands;
 }

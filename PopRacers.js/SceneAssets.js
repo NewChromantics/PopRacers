@@ -1,5 +1,6 @@
-import {CreateCubeGeometry} from './PopEngineCommon/CommonGeometry.js'
+import {CreateCubeGeometry,CreateQuad3Geometry} from './PopEngineCommon/CommonGeometry.js'
 import GeoVertGlsl from './Assets/Geo.Vert.glsl.js'
+import {TrackQuadVertGlsl,TrackQuadFragGlsl} from './Assets/TrackQuad.Vert.glsl.js'
 import {ExtractShaderUniforms} from './PopEngineCommon/Shaders.js'
 import * as BlitShaderSource from './Assets/BlitYuv.Frag.glsl.js'
 
@@ -16,19 +17,6 @@ void main()
 }
 `;
 
-const TrackShader_FragSource = `
-#version 100
-precision highp float;
-varying vec2 FragLocalUv;
-uniform bool Selected;
-void main()
-{
-	//	dark
-	gl_FragColor = vec4( FragLocalUv*0.5, 0.5, 1 );
-	if ( Selected )
-		gl_FragColor.x = 1.0;
-}
-`;
 
 
 const WorldGeoShader_FragSource = `
@@ -60,7 +48,7 @@ void main()
 
 
 const CubeShader_VertSource = GeoVertGlsl;
-const TrackShader_VertSource = GeoVertGlsl;
+const TrackShader_VertSource = TrackQuadVertGlsl;
 const WorldGeoShader_VertSource = GeoVertGlsl;
 const WorldGeoShader_AttribNames = ['LocalPosition'];
 
@@ -73,6 +61,8 @@ let ScreenQuad = null;
 let ScreenQuad_AttribNames = [];
 let CubeTriangleBuffer = null;
 let Cube_AttribNames = [];
+let TrackQuadTriangleBuffer = null;
+let TrackQuad_AttribNames = [];
 
 
 function GetScreenQuad(MinX,MinY,MaxX,MaxY,TheZ=0)
@@ -139,6 +129,14 @@ export async function LoadAssets(RenderContext)
 		Cube_AttribNames = Object.keys(Geometry);
 	}
 
+	if ( !TrackQuadTriangleBuffer )
+	{
+		const CubeSize = 0.010;
+		const Geometry = CreateQuad3Geometry(-CubeSize,CubeSize);
+		TrackQuadTriangleBuffer = await RenderContext.CreateGeometry(Geometry,undefined);
+		TrackQuad_AttribNames = Object.keys(Geometry);
+	}
+
 	if ( !BlitShader && ScreenQuad )
 	{
 		const FragSource = BlitShaderSource.FragSource;
@@ -155,12 +153,12 @@ export async function LoadAssets(RenderContext)
 		CubeShader = await RenderContext.CreateShader(VertSource,FragSource,ShaderUniforms,Cube_AttribNames);
 	}
 	
-	if ( !TrackShader && CubeTriangleBuffer )
+	if ( !TrackShader && TrackQuadTriangleBuffer )
 	{
-		const FragSource = TrackShader_FragSource;
+		const FragSource = TrackQuadFragGlsl;
 		const VertSource = TrackShader_VertSource;
 		const ShaderUniforms = ExtractShaderUniforms(VertSource,FragSource);
-		TrackShader = await RenderContext.CreateShader(VertSource,FragSource,ShaderUniforms,Cube_AttribNames);
+		TrackShader = await RenderContext.CreateShader(VertSource,FragSource,ShaderUniforms,TrackQuad_AttribNames);
 	}
 	
 	if ( !WorldGeoShader )
@@ -181,6 +179,7 @@ export function GetAssets()
 	Assets.CubeGeo = CubeTriangleBuffer;
 	Assets.CubeShader = CubeShader;
 	Assets.TrackShader = TrackShader;
+	Assets.TrackQuadGeo = TrackQuadTriangleBuffer;
 	
 	Assets.WorldGeoShader = WorldGeoShader;
 	
