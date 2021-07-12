@@ -14,6 +14,7 @@ class TrackPoint_t
 //	
 let TrackPoints = [];	//	TrackPoint_t
 let LockedPoint = null;
+const MaxSectionLength = 0.1;
 
 function UnlockPoint()
 {
@@ -59,6 +60,22 @@ function GetNearestPoint(Position,MaxDistance)
 	return Points[0].Point;
 }
 
+function GetPreviousPoint(Point)
+{
+	if ( !Point )
+		return null;
+	if ( TrackPoints.length < 2 )
+		return null;
+		
+	let ThisIndex = TrackPoints.indexOf(Point);
+	if ( ThisIndex == -1 )
+		throw `GetPreviousPoint() Didn't find this point?`;
+
+	let PreviousIndex = (ThisIndex==0) ? TrackPoints.length-1 : ThisIndex-1;
+	return TrackPoints[PreviousIndex];
+	
+}
+
 export function OnClickMap(WorldPos,FirstDown)
 {
 	if ( FirstDown )
@@ -75,6 +92,19 @@ export function OnClickMap(WorldPos,FirstDown)
 		const NewPoint = new TrackPoint_t(WorldPos);
 		TrackPoints.push(NewPoint);
 		LockPoint(NewPoint);
+	}
+	
+	//	if this stretches the current pos, snap and make a new one
+	let PreviousPoint = GetPreviousPoint(LockedPoint);
+	if ( PreviousPoint )
+	{
+		const SectionLength = PopMath.Distance3( WorldPos, PreviousPoint.Position );
+		if ( SectionLength > MaxSectionLength )
+		{
+			const NewPoint = new TrackPoint_t(WorldPos);
+			TrackPoints.push(NewPoint);
+			LockPoint(NewPoint);
+		}
 	}
 	
 	LockedPoint.Position = WorldPos;
