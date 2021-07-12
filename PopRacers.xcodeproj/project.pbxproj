@@ -90,6 +90,7 @@
 		BF269CE926925A760077D78D /* PopCameraDevice.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = PopCameraDevice.xcframework; path = Source/Apple/PopCameraDevice.xcframework; sourceTree = "<group>"; };
 		BF269CED26925A780077D78D /* PopEngine.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = PopEngine.xcframework; path = Source/Apple/PopEngine.xcframework; sourceTree = "<group>"; };
 		BF269CF026925A7A0077D78D /* PopH264.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = PopH264.xcframework; path = Source/Apple/PopH264.xcframework; sourceTree = "<group>"; };
+		BF5791F4269CD63F00A1565C /* PopRacers */ = {isa = PBXFileReference; lastKnownFileType = folder; name = PopRacers; sourceTree = "<group>"; };
 		BFC333C226925DE400EAFDD9 /* PopRacersAppClip.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PopRacersAppClip.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BFC333CD26925DE700EAFDD9 /* AppClipInfo.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = AppClipInfo.plist; sourceTree = "<group>"; };
 		BFC333CE26925DE700EAFDD9 /* PopRacers_AppClip.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = PopRacers_AppClip.entitlements; sourceTree = "<group>"; };
@@ -136,6 +137,7 @@
 		BFF2285A2692216800AFAE52 = {
 			isa = PBXGroup;
 			children = (
+				BF5791F4269CD63F00A1565C /* PopRacers */,
 				BFF2289D269227CB00AFAE52 /* PopRacers.js */,
 				BFF228652692216800AFAE52 /* Source */,
 				BFF228642692216800AFAE52 /* Products */,
