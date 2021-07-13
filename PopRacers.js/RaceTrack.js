@@ -115,30 +115,48 @@ export function GetRenderCommands(CameraUniforms,Camera,Assets)
 {
 	let Commands = [];
 	
-	//	make track lines
-	for ( let t=0;	t<TrackPoints.length;	t++ )
-	{
-		const This = TrackPoints[t];
-		const Next = TrackPoints[(t+1)%TrackPoints.length];
-		
-		const Uniforms = Object.assign({},CameraUniforms);
-		Uniforms.StartWorldPosition = This.Position.slice();
-		Uniforms.EndWorldPosition = Next.Position.slice();
-		Uniforms.StartWorldPosition[1] += 0.001;
-		Uniforms.EndWorldPosition[1] += 0.001;
-		Uniforms.Selected = This.Selected;
-		Commands.push( ['Draw',Assets.TrackQuadGeo,Assets.TrackShader,Uniforms] );
-	}
 /*	
 	for ( let TrackPoint of TrackPoints )
 	{
 		const Uniforms = Object.assign({},CameraUniforms);
 		const Position = TrackPoint.Position.slice();
-		Position[1] += 0.001;
 		Uniforms.LocalToWorldTransform = PopMath.CreateTranslationMatrix(...Position);
 		Uniforms.Selected = TrackPoint.Selected;
+		Commands.push( ['Draw',Assets.CubeGeo,Assets.CubeShader,Uniforms] );
+	}
+*/
+	function GetTrackPoint(Index)
+	{
+		if ( TrackPoints.length == 1 )
+			return TrackPoints[0];
+			
+		if ( Index < 0 )
+			Index += TrackPoints.length;
+		Index = Index % TrackPoints.length;
+		return TrackPoints[Index];
+	}
+	
+	//	make track lines
+	for ( let t=0;	t<TrackPoints.length;	t++ )
+	{
+		const Prev = GetTrackPoint(t-1);
+		const Start = GetTrackPoint(t+0);
+		const End = GetTrackPoint(t+1);
+		const Next = GetTrackPoint(t+2);
+		
+		const Uniforms = Object.assign({},CameraUniforms);
+		Uniforms.PrevWorldPosition = Prev.Position.slice();
+		Uniforms.StartWorldPosition = Start.Position.slice();
+		Uniforms.EndWorldPosition = End.Position.slice();
+		Uniforms.NextWorldPosition = Next.Position.slice();
+		Uniforms.PrevWorldPosition[1] += 0.0011;
+		Uniforms.StartWorldPosition[1] += 0.0012;
+		Uniforms.EndWorldPosition[1] += 0.0013;
+		Uniforms.NextWorldPosition[1] += 0.0014;
+		Uniforms.Selected = Start.Selected;
 		Commands.push( ['Draw',Assets.TrackQuadGeo,Assets.TrackShader,Uniforms] );
 	}
-	*/
+
+
 	return Commands;
 }

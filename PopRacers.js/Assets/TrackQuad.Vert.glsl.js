@@ -20,9 +20,13 @@ uniform mat4 CameraProjectionTransform;
 
 void main()
 {
-	//vec3 LocalPos = LocalPosition;
+/*
+	vec3 LocalPos = LocalPosition;
 	//vec3 WorldPos3 = mix( StartWorldPosition, EndWorldPosition, LocalUv.y );
-	//WorldPos3 += LocalPos;//	+localuv?
+	vec3 WorldPos3 = StartWorldPosition;
+	WorldPos3 += LocalPos;//	+localuv?
+	
+	*/
 	//	use u as left/right
 	//	use v as front/back
 	//	make quad big enough to sdf
@@ -66,10 +70,15 @@ varying vec2 FragLocalUv;
 uniform float Selected;	//	no bool on ios
 uniform vec3 StartWorldPosition;
 uniform vec3 EndWorldPosition;
+uniform vec3 PrevWorldPosition;
+uniform vec3 NextWorldPosition;
 
 const float TrackWidth = 0.01;
 const float DashWidth = TrackWidth * 0.2;
 const float DashInset = DashWidth;
+
+const vec3 EdgeLineColour = vec3(1.00,0.80,0.07);
+const vec3 CenterLineColour = vec3(1,1,1);
 
 float TimeAlongLine2(vec2 Position,vec2 Start,vec2 End)
 {
@@ -103,7 +112,11 @@ float DistanceToLine2(vec2 Position,vec2 Start,vec2 End)
 
 float GetDistanceToTrack()
 {
-	return DistanceToLine2( WorldPosition.xz, StartWorldPosition.xz, EndWorldPosition.xz );
+	//	get distance to each section so we dont end inside another piece of track
+	float Distance0 = DistanceToLine2( WorldPosition.xz, PrevWorldPosition.xz, StartWorldPosition.xz );
+	float Distance1 = DistanceToLine2( WorldPosition.xz, StartWorldPosition.xz, EndWorldPosition.xz );
+	float Distance2 = DistanceToLine2( WorldPosition.xz, EndWorldPosition.xz, NextWorldPosition.xz );
+	return min( Distance0, min( Distance1, Distance2 ) );
 }
 
 void main()
@@ -119,13 +132,13 @@ void main()
 	
 	//	edge lines
 	float HalfDashWidth = DashWidth * 0.5;
-	/*
+	
 	if ( Distance < TrackWidth - DashInset + HalfDashWidth &&
 		Distance > TrackWidth - DashInset - HalfDashWidth )
 	{
-		gl_FragColor = vec4( 1, 1, 1, 1 );
+		gl_FragColor = vec4( EdgeLineColour, 1 );
 	}
-*/
+
 	//	center lines
 	if ( Distance < HalfDashWidth )
 	{
@@ -133,11 +146,11 @@ void main()
 		float RepeatEvery = 0.02;
 		float DashScalar = 1.0 / RepeatEvery;
 		if ( fract(DistanceAlongLine*DashScalar) < 0.5 )
-			gl_FragColor = vec4( 1, 1, 1, 1 );
+			gl_FragColor = vec4( CenterLineColour, 1 );
 	}
 	
 	
-	if ( Selected )
+	if ( Selected > 0.0 )
 	{
 		float DistanceToStart = length( StartWorldPosition - WorldPosition );
 		if ( DistanceToStart < TrackWidth )
