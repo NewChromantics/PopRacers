@@ -118,7 +118,7 @@ function OnGeometryFrame(Frame)
 		if ( !Anchor.IsHorizontal() )
 			return;
 
-	OnGeometryAnchor(Anchor);
+	AddGeometryAnchor(Anchor);
 	Pop.Debug(`Got geometry frame; ${JSON.stringify(Frame.Meta)}`);
 }
 

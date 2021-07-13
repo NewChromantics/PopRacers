@@ -63,7 +63,7 @@ export const TrackQuadFragGlsl = `
 precision highp float;
 varying vec3 WorldPosition;
 varying vec2 FragLocalUv;
-uniform bool Selected;
+uniform float Selected;	//	no bool on ios
 uniform vec3 StartWorldPosition;
 uniform vec3 EndWorldPosition;
 
