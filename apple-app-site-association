@@ -3,8 +3,8 @@
       "details": [
            {
              "appIDs": [ 
-             "1576417885.com.newchromantics.popracers", 
-             "1576417885.com.newchromantics.popracers.Clip" 
+             "1576417885.com.NewChromantics.PopRacers", 
+             "1576417885.com.NewChromantics.PopRacers.Clip" 
              ],
              "components": [
                {
@@ -31,12 +31,12 @@
        ]
    },
    "webcredentials": {
-      "apps": [ "1576417885.com.newchromantics.popracers", "1576417885.com.newchromantics.popracers.Clip" ]
+      "apps": [  ]
    },
 
     "appclips": {
         "apps": [
-        "1576417885.com.newchromantics.popracers.Clip",
-        "1576417885.com.newchromantics.popracers"]
+        "1576417885.com.NewChromantics.PopRacers.Clip",
+        "1576417885.com.NewChromantics.PopRacers"]
     }
 }
