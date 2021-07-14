@@ -2,7 +2,10 @@
   "applinks": {
       "details": [
            {
-             "appIDs": [ "com.newchromantics.popracers", "com.newchromantics.popracers.Clip", "ABCDE12345.com.example.app2" ],
+             "appIDs": [ 
+             "1576417885.com.newchromantics.popracers", 
+             "1576417885.com.newchromantics.popracers.Clip" 
+             ],
              "components": [
                {
                   "#": "no_universal_links",
@@ -28,10 +31,12 @@
        ]
    },
    "webcredentials": {
-      "apps": [ "ABCDE12345.com.example.app" ]
+      "apps": [ "1576417885.com.newchromantics.popracers", "1576417885.com.newchromantics.popracers.Clip" ]
    },
 
     "appclips": {
-        "apps": ["com.newchromantics.popracers.Clip"]
+        "apps": [
+        "1576417885.com.newchromantics.popracers.Clip",
+        "1576417885.com.newchromantics.popracers"]
     }
 }
