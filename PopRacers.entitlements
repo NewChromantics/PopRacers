@@ -4,7 +4,6 @@
 <dict>
 	<key>com.apple.developer.associated-domains</key>
 	<array>
-		<string>appclips:newchromantics.github.io</string>
 		<string>appclips:popracers.newchromantics.com</string>
 	</array>
 </dict>
