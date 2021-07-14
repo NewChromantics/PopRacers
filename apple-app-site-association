@@ -3,8 +3,8 @@
       "details": [
            {
              "appIDs": [ 
-             "1576417885.com.NewChromantics.PopRacers", 
-             "1576417885.com.NewChromantics.PopRacers.Clip" 
+             "X52DR36JY2.com.NewChromantics.PopRacers", 
+             "X52DR36JY2.com.NewChromantics.PopRacers.Clip" 
              ],
              "components": [
                {
@@ -36,7 +36,7 @@
 
     "appclips": {
         "apps": [
-        "1576417885.com.NewChromantics.PopRacers.Clip",
-        "1576417885.com.NewChromantics.PopRacers"]
+        "X52DR36JY2.com.NewChromantics.PopRacers.Clip",
+        "X52DR36JY2.com.NewChromantics.PopRacers"]
     }
 }
