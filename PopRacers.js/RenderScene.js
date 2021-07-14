@@ -221,6 +221,10 @@ function CreateRayCube(u,v,FirstDown,Camera,ScreenRect)
 
 export function OnMouseMove(x,y,Button,FirstDown=false)
 {
+	//	remap some mobile buttons
+	if ( Button == 'Touch0' )
+		Button = 'Left';
+	
 	//	todo: get correct camera for mouse source
 	const Frame = GetXrFrame();
 	const RenderView = this;
@@ -239,13 +243,16 @@ export function OnMouseMove(x,y,Button,FirstDown=false)
 		}
 		CreateRayCube( u, v, FirstDown, Camera, Rect );
 	}
-	
-	if ( Button == 'Right' )
+	else if ( Button == 'Right' )
 	{
 		//	pan horz
 		const Camera = GetXrFrame().Camera;
 		let MoveScale = 0.1;
 		Camera.OnCameraPanLocal( -x*MoveScale, 0, y*MoveScale, FirstDown );
+	}
+	else
+	{
+		Pop.Debug(`Button; ${Button}`);
 	}
 }
 
