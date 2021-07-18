@@ -92,6 +92,7 @@
 		BF269CF026925A7A0077D78D /* PopH264.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = PopH264.xcframework; path = Source/Apple/PopH264.xcframework; sourceTree = "<group>"; };
 		BF6CF4CD269EEA64009CF9D2 /* index.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = index.html; sourceTree = SOURCE_ROOT; };
 		BF8DBFD7269F789700B9DEA9 /* PopRacers.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = PopRacers.entitlements; sourceTree = "<group>"; };
+		BF8DBFD8269F82C800B9DEA9 /* apple-app-site-association */ = {isa = PBXFileReference; lastKnownFileType = text; path = "apple-app-site-association"; sourceTree = SOURCE_ROOT; };
 		BFC333C226925DE400EAFDD9 /* PopRacersAppClip.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PopRacersAppClip.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BFC333CD26925DE700EAFDD9 /* AppClipInfo.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = AppClipInfo.plist; sourceTree = "<group>"; };
 		BFC333CE26925DE700EAFDD9 /* PopRacers_AppClip.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = PopRacers_AppClip.entitlements; sourceTree = "<group>"; };
@@ -138,6 +139,7 @@
 		BF6CF4CC269EEA59009CF9D2 /* Root */ = {
 			isa = PBXGroup;
 			children = (
+				BF8DBFD8269F82C800B9DEA9 /* apple-app-site-association */,
 				BF6CF4CD269EEA64009CF9D2 /* index.html */,
 			);
 			path = Root;
@@ -146,7 +148,6 @@
 		BFF2285A2692216800AFAE52 = {
 			isa = PBXGroup;
 			children = (
-				BF8DBFD7269F789700B9DEA9 /* PopRacers.entitlements */,
 				BF6CF4CC269EEA59009CF9D2 /* Root */,
 				BFF2289D269227CB00AFAE52 /* PopRacers.js */,
 				BFF228652692216800AFAE52 /* Source */,
@@ -174,6 +175,7 @@
 				BFF228662692216800AFAE52 /* PopRacersApp.swift */,
 				BFC333CE26925DE700EAFDD9 /* PopRacers_AppClip.entitlements */,
 				BFF228682692216800AFAE52 /* ContentView.swift */,
+				BF8DBFD7269F789700B9DEA9 /* PopRacers.entitlements */,
 				BFF2286A2692216A00AFAE52 /* Assets.xcassets */,
 				BFF2286F2692216A00AFAE52 /* AppInfo.plist */,
 				BFF22888269223C600AFAE52 /* PopRacers-Bridging-Header.h */,
@@ -337,7 +339,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = Source/PopRacers_AppClip.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 5;
+				CURRENT_PROJECT_VERSION = 6;
 				DEVELOPMENT_ASSET_PATHS = "";
 				DEVELOPMENT_TEAM = X52DR36JY2;
 				ENABLE_PREVIEWS = YES;
@@ -363,7 +365,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = Source/PopRacers_AppClip.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 5;
+				CURRENT_PROJECT_VERSION = 6;
 				DEVELOPMENT_ASSET_PATHS = "";
 				DEVELOPMENT_TEAM = X52DR36JY2;
 				ENABLE_PREVIEWS = YES;
@@ -509,7 +511,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = PopRacers.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 5;
+				CURRENT_PROJECT_VERSION = 6;
 				DEVELOPMENT_TEAM = X52DR36JY2;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/Source/AppInfo.plist";
@@ -537,7 +539,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = PopRacers.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 5;
+				CURRENT_PROJECT_VERSION = 6;
 				DEVELOPMENT_TEAM = X52DR36JY2;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/Source/AppInfo.plist";
