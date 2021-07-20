@@ -107,7 +107,7 @@ export function GetRenderCommands(CameraUniforms,Camera,Assets)
 			Uniforms.LocalToWorldTransform = PopMath.CreateIdentityMatrix();
 			Uniforms.WorldBoundsBottom = Bottom;
 			Uniforms.WorldBoundsTop = Top;
-			Uniforms.BoundsRadius = 0.05;
+			Uniforms.BoundsRadius = 0.06;
 			Commands.push( ['Draw',DrinkGeo,DrinkShader,Uniforms] );
 		}
 	}

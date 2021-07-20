@@ -139,6 +139,8 @@ function GetSceneRenderCommands(Camera,ScreenRect)
 		Uniforms.LocalToWorldTransform = LocalToWorldTransform;
 		Uniforms.WorldToCameraTransform = WorldToCameraMatrix;
 		Uniforms.CameraProjectionTransform = CameraProjectionMatrix;
+		Uniforms.CameraToWorldTransform = CameraToWorldTransform;
+		Uniforms.ScreenToCameraTransform = CameraProjectionMatrix;
 		
 		if ( RenderOriginCube )
 		{
