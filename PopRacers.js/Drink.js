@@ -1,169 +1,116 @@
 import * as PopMath from './PopEngineCommon/Math.js'
-const Default = 'RaceTrack.js';
+const Default = 'Drink.js';
 export default Default;
 
+import {CreateCubeGeometry} from './PopEngineCommon/CommonGeometry.js'
+import * as DrinkShaderSource from './Drink/DrinkShader.glsl.js'
+import {ExtractShaderUniforms} from './PopEngineCommon/Shaders.js'
 
-class TrackPoint_t
-{
-	constructor(Position)
-	{
-		this.Selected = false;
-		this.Position = Position;
-	}
-}
-//	
-let TrackPoints = [];	//	TrackPoint_t
-let LockedPoint = null;
-const MaxSectionLength = 0.1;
 
-function UnlockPoint()
-{
-	//	if we have one locked, unlock it
-	if ( !LockedPoint )
-		return;
-		
-	LockedPoint.Selected = false;
-	LockedPoint = null;
-}
+let DrinkShader = null;
+let DrinkGeo = null;
+let DrinkGeoAttribs = null;
 
-function LockPoint(Point)
-{
-	UnlockPoint();
-	
-	if ( !Point )
-		return;
-		
-	LockedPoint = Point;
-	LockedPoint.Selected = true;
-}
+let DrinkBottom = null;
+let DrinkTop = null;
+let PendingPosition = null;
 
-function GetNearestPoint(Position,MaxDistance)
-{
-	function PointToPointAndDistance(Point)
-	{
-		const PointAndDistance = {};
-		PointAndDistance.Point = Point;
-		PointAndDistance.Distance = PopMath.Distance3( Position, Point.Position );
-		return PointAndDistance;
-	}
-	function CompareDistance(a,b)
-	{
-		if ( a.Distance < b.Distance )	return -1;
-		if ( a.Distance > b.Distance )	return 1;
-		return 0;
-	}
-	let Points = TrackPoints.map( PointToPointAndDistance );
-	Points = Points.filter( pad => pad.Distance <= MaxDistance );
-	Points.sort( CompareDistance );
-	if ( !Points.length )
-		return null;
-	return Points[0].Point;
-}
-
-function GetPreviousPoint(Point)
-{
-	if ( !Point )
-		return null;
-	if ( TrackPoints.length < 2 )
-		return null;
-		
-	let ThisIndex = TrackPoints.indexOf(Point);
-	if ( ThisIndex == -1 )
-		throw `GetPreviousPoint() Didn't find this point?`;
-
-	let PreviousIndex = (ThisIndex==0) ? TrackPoints.length-1 : ThisIndex-1;
-	return TrackPoints[PreviousIndex];
-	
-}
-
-export function OnHoverMap(WorldPos,FirstDown)
+export function OnHoverMap(WorldPos,WorldRay,FirstDown)
 {
 }
 
-export function OnClickMap(WorldPos,FirstDown)
+export function OnUnclickMap()
 {
-	if ( FirstDown )
+	if ( PendingPositon )
 	{
-		//	look for nearby existing points to manipulate
-		const MaxDistance = 0.05;	//	need to figure this out with camera info
-		const NearestPoint = GetNearestPoint(WorldPos,MaxDistance);
-		LockPoint( NearestPoint );
-	}
-	
-	//	if no locked point, make a new one
-	if ( !LockedPoint )
-	{
-		const NewPoint = new TrackPoint_t(WorldPos);
-		TrackPoints.push(NewPoint);
-		LockPoint(NewPoint);
-	}
-	
-	//	if this stretches the current pos, snap and make a new one
-	let PreviousPoint = GetPreviousPoint(LockedPoint);
-	if ( PreviousPoint )
-	{
-		const SectionLength = PopMath.Distance3( WorldPos, PreviousPoint.Position );
-		if ( SectionLength > MaxSectionLength )
+		if ( !DrinkBottom )
 		{
-			const NewPoint = new TrackPoint_t(WorldPos);
-			TrackPoints.push(NewPoint);
-			LockPoint(NewPoint);
+			DrinkBottom = PendingPosition;
+			PendingPosition = null;
+		}	
+		else
+		{
+			DrinkTop = PendingPosition;
+			PendingPosition = null;
 		}
 	}
-	
-	LockedPoint.Position = WorldPos;
 }
 
-export function LoadAssets(RenderContext)
+export function OnClickMap(WorldPos,WorldRay,FirstDown)
 {
+	if ( !DrinkBottom )
+	{
+		//	need to get a hit for placing the bottom 
+		if ( WorldPos )
+		{
+			//PendingPosition = WorldPos;
+			//	immediatly place
+			DrinkBottom = WorldPos;
+		}
+	}
+	else if ( DrinkBottom )//if ( !DrinkTop && DrinkBottom )
+	{
+		//	need to find the Y above drinkbottom that we're pointing at
+		//	so get two rays, drink up, and our ray
+		//	then find the nearest point on the drink line
+		const DrinkUp = [0,1,0];
+		const Result = PopMath.GetRayRayIntersection3( DrinkBottom, DrinkUp, WorldRay.Start, WorldRay.Direction );
+		let NewDrinkTop = PopMath.GetRayPositionAtTime( DrinkBottom, DrinkUp, Result.IntersectionTimeA );
+		
+		NewDrinkTop[1] = Math.max( DrinkBottom[1], NewDrinkTop[1] );
+		DrinkTop = NewDrinkTop;
+	}
+}
+
+export async function LoadAssets(RenderContext)
+{
+	if ( !DrinkGeo )
+	{
+		const Geometry = CreateCubeGeometry(0,1);
+		DrinkGeo = await RenderContext.CreateGeometry(Geometry,undefined);
+		DrinkGeoAttribs = Object.keys(Geometry);
+	}
+	
+	if ( !DrinkShader && DrinkGeo )
+	{
+		const FragSource = DrinkShaderSource.Frag;
+		const VertSource = DrinkShaderSource.Vert;
+		const ShaderUniforms = ExtractShaderUniforms(VertSource,FragSource);
+		DrinkShader = await RenderContext.CreateShader(VertSource,FragSource,ShaderUniforms,DrinkGeoAttribs);
+	}
 }
 
 export function GetRenderCommands(CameraUniforms,Camera,Assets)
 {
 	let Commands = [];
 	
-/*	
-	for ( let TrackPoint of TrackPoints )
+	function DrawCube(Position)
 	{
+		if ( !Position )
+			return;
 		const Uniforms = Object.assign({},CameraUniforms);
-		const Position = TrackPoint.Position.slice();
+		//const Position = TrackPoint.Position.slice();
 		Uniforms.LocalToWorldTransform = PopMath.CreateTranslationMatrix(...Position);
-		Uniforms.Selected = TrackPoint.Selected;
-		Commands.push( ['Draw',Assets.CubeGeo,Assets.CubeShader,Uniforms] );
-	}
-*/
-	function GetTrackPoint(Index)
-	{
-		if ( TrackPoints.length == 1 )
-			return TrackPoints[0];
-			
-		if ( Index < 0 )
-			Index += TrackPoints.length;
-		Index = Index % TrackPoints.length;
-		return TrackPoints[Index];
+		Uniforms.Selected = false;//TrackPoint.Selected;
+		Commands.push( ['Draw',DrinkGeo,DrinkShader,Uniforms] );
 	}
 	
-	//	make track lines
-	for ( let t=0;	t<TrackPoints.length;	t++ )
 	{
-		const Prev = GetTrackPoint(t-1);
-		const Start = GetTrackPoint(t+0);
-		const End = GetTrackPoint(t+1);
-		const Next = GetTrackPoint(t+2);
+		let Bottom = DrinkBottom;
+		let Top = PendingPosition || DrinkTop || DrinkBottom;
+		//DrawCube(Bottom);
+		//DrawCube(Top);
 		
-		const Uniforms = Object.assign({},CameraUniforms);
-		Uniforms.PrevWorldPosition = Prev.Position.slice();
-		Uniforms.StartWorldPosition = Start.Position.slice();
-		Uniforms.EndWorldPosition = End.Position.slice();
-		Uniforms.NextWorldPosition = Next.Position.slice();
-		Uniforms.PrevWorldPosition[1] += 0.0011;
-		Uniforms.StartWorldPosition[1] += 0.0012;
-		Uniforms.EndWorldPosition[1] += 0.0013;
-		Uniforms.NextWorldPosition[1] += 0.0014;
-		Uniforms.Selected = Start.Selected;
-		Commands.push( ['Draw',Assets.TrackQuadGeo,Assets.TrackShader,Uniforms] );
+		if ( Bottom && Top )
+		{
+			const Uniforms = Object.assign({},CameraUniforms);
+			Uniforms.LocalToWorldTransform = PopMath.CreateIdentityMatrix();
+			Uniforms.WorldBoundsBottom = Bottom;
+			Uniforms.WorldBoundsTop = Top;
+			Uniforms.BoundsRadius = 0.05;
+			Commands.push( ['Draw',DrinkGeo,DrinkShader,Uniforms] );
+		}
 	}
-
 
 	return Commands;
 }

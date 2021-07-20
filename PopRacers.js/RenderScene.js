@@ -7,7 +7,8 @@ import * as PopMath from './PopEngineCommon/Math.js'
 import {Camera as PopCamera} from './PopEngineCommon/Camera.js'
 import WorldGeo_t from './WorldGeo.js'
 import {CreateQuad3Geometry} from './PopEngineCommon/CommonGeometry.js'
-import * as RaceTrack from './RaceTrack.js'
+//import * as RaceTrack from './RaceTrack.js'
+import * as RaceTrack from './Drink.js'
 import Params from './Params.js'
 
 const Default = 'RenderScene.js';
@@ -230,13 +231,11 @@ function OnUserClick(u,v,Button,FirstDown,Camera,ScreenRect)
 	//	raycast to geometry
 	const Hit = RayCastToWorldGeos( WorldRay );
 	//Pop.Debug(`RayCast hit=${Hit}`);
-	if ( !Hit )
-		return;
-	
+
 	if ( !Button )
-		RaceTrack.OnHoverMap( Hit, FirstDown );
+		RaceTrack.OnHoverMap( Hit, WorldRay, FirstDown );
 	else
-		RaceTrack.OnClickMap( Hit, FirstDown );
+		RaceTrack.OnClickMap( Hit, WorldRay, FirstDown );
 }
 
 export function OnMouseMove(x,y,Button,FirstDown=false)
@@ -282,6 +281,18 @@ export function OnMouseMove(x,y,Button,FirstDown=false)
 	else
 	{
 		Pop.Debug(`Button; ${Button}`);
+	}
+}
+
+export function OnMouseUp(x,y,Button)
+{
+	//	remap some mobile buttons
+	if ( Button == 'Touch0' )
+		Button = 'Left';
+		
+	if ( Button == 'Left' )
+	{
+		RaceTrack.OnUnclickMap();
 	}
 }
 
