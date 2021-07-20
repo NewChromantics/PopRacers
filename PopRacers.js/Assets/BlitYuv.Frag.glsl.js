@@ -10,6 +10,7 @@ varying vec2 uv;
 uniform sampler2D Luma;
 uniform sampler2D Plane1;
 uniform sampler2D Plane2;
+uniform int PlaneCount;
 
 struct YuvColourParams
 {
@@ -52,8 +53,15 @@ vec3 LumaChromaUV_To_Rgb(float Luma,float ChromaU,float ChromaV,YuvColourParams 
 
 void main()
 {
-	//	gr: get correct flip/rotation!
 	vec2 SampleUv = vec2(uv.x,1.0-uv.y);
+
+	if ( PlaneCount == 1 )
+	{
+		gl_FragColor = texture2D( Luma, SampleUv );
+		return;
+	}
+		
+	//	gr: get correct flip/rotation!
 	float Lumaf = texture2D( Luma, SampleUv ).x;
 	//float ChromaUf = texture2D( Plane1, SampleUv ).x;
 	//float ChromaVf = texture2D( Plane2, SampleUv ).x;

@@ -8,7 +8,7 @@ import {Camera as PopCamera} from './PopEngineCommon/Camera.js'
 import WorldGeo_t from './WorldGeo.js'
 import {CreateQuad3Geometry} from './PopEngineCommon/CommonGeometry.js'
 import * as RaceTrack from './RaceTrack.js'
-
+import Params from './Params.js'
 
 const Default = 'RenderScene.js';
 export default Default;
@@ -20,6 +20,15 @@ InitialXrFrame.Camera = new PopCamera();
 InitialXrFrame.Camera.Position = [0,0.2,0.3];
 InitialXrFrame.Camera.FovVertical = 60;
 InitialXrFrame.Planes = [CreateRandomImage(512,512)];
+
+async function LoadBackgroundImage()
+{
+	const Image = await Pop.LoadFileAsImageAsync('PopRacers.js/Drink/bar1.jpg');
+	InitialXrFrame.Planes[0] = Image;
+	InitialXrFrame.Camera.Position = [0.012,0.196,0.359];
+	InitialXrFrame.Camera.LookAt = [0.02,0.16,0.00];
+}
+LoadBackgroundImage();
 
 //	pending
 let XrFrames = [InitialXrFrame];	//	always keep one to render
@@ -65,6 +74,7 @@ function UpdateXrCamera()
 
 export async function LoadAssets(RenderContext)
 {
+	await RaceTrack.LoadAssets(RenderContext);
 	await SceneAssets.LoadAssets(RenderContext);
 	await LoadWorldGeos(RenderContext);
 }
@@ -103,6 +113,7 @@ function GetSceneRenderCommands(Camera,ScreenRect)
 		Uniforms.Luma = XrFrame.Planes[0];
 		Uniforms.Plane1 = XrFrame.Planes[1] || Uniforms.Luma;
 		Uniforms.Plane2 = XrFrame.Planes[2] || Uniforms.Plane1;
+		Uniforms.PlaneCount = XrFrame.Planes.length;
 		const State = {};
 		State.DepthRead = false;
 		State.DepthWrite = false;
@@ -144,9 +155,11 @@ function GetSceneRenderCommands(Camera,ScreenRect)
 			GeoUniforms.LocalToWorldTransform = WorldGeo.LocalToWorld;
 
 			//	draw the plane geo
-			Commands.push( ['Draw',WorldGeo.TriangleBuffer,Assets.WorldGeoShader,GeoUniforms] );
+			if ( Params.DrawWorldGeo )
+				Commands.push( ['Draw',WorldGeo.TriangleBuffer,Assets.WorldGeoShader,GeoUniforms] );
 			//	draw a cube at its center
-			//Commands.push( ['Draw',Assets.CubeGeo,Assets.CubeShader,GeoUniforms] );
+			if ( Params.DrawWorldGeoCenter )
+				Commands.push( ['Draw',Assets.CubeGeo,Assets.CubeShader,GeoUniforms] );
 		
 		}
 		
@@ -200,7 +213,11 @@ function RayCastToWorldGeos(WorldRay)
 	return null;
 }
 
-function OnUserClick(u,v,FirstDown,Camera,ScreenRect)
+function OnUserHover(u,v,FirstDown,Camera,ScreenRect)
+{
+}
+
+function OnUserClick(u,v,Button,FirstDown,Camera,ScreenRect)
 {
 	//	get ray from camrea
 	//const ViewRect = [0,0,1,1];
@@ -216,7 +233,10 @@ function OnUserClick(u,v,FirstDown,Camera,ScreenRect)
 	if ( !Hit )
 		return;
 	
-	RaceTrack.OnClickMap( Hit, FirstDown );
+	if ( !Button )
+		RaceTrack.OnHoverMap( Hit, FirstDown );
+	else
+		RaceTrack.OnClickMap( Hit, FirstDown );
 }
 
 export function OnMouseMove(x,y,Button,FirstDown=false)
@@ -229,7 +249,7 @@ export function OnMouseMove(x,y,Button,FirstDown=false)
 	const Frame = GetXrFrame();
 	const RenderView = this;
 	
-	if ( Button == 'Left' )
+	if ( Button == 'Left' || Button === null )
 	{
 		const Camera = Frame.Camera;
 		const Rect = RenderView.GetScreenRect();
@@ -241,7 +261,7 @@ export function OnMouseMove(x,y,Button,FirstDown=false)
 		{
 			v = 1 - v;
 		}
-		OnUserClick( u, v, FirstDown, Camera, Rect );
+		OnUserClick( u, v, Button, FirstDown, Camera, Rect );
 	}
 	else if ( Button == 'Middle' )
 	{
@@ -256,6 +276,8 @@ export function OnMouseMove(x,y,Button,FirstDown=false)
 		const Camera = GetXrFrame().Camera;
 		let MoveScale = 1.0;
 		Camera.OnCameraOrbit( x*MoveScale, y*MoveScale, 0, FirstDown );
+		
+		Pop.Debug(`New Camera pos=${Camera.Position} lookat=${Camera.LookAt}`);
 	}
 	else
 	{
