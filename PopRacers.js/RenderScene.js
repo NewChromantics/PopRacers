@@ -200,7 +200,7 @@ function RayCastToWorldGeos(WorldRay)
 	return null;
 }
 
-function CreateRayCube(u,v,FirstDown,Camera,ScreenRect)
+function OnUserClick(u,v,FirstDown,Camera,ScreenRect)
 {
 	//	get ray from camrea
 	//const ViewRect = [0,0,1,1];
@@ -241,14 +241,21 @@ export function OnMouseMove(x,y,Button,FirstDown=false)
 		{
 			v = 1 - v;
 		}
-		CreateRayCube( u, v, FirstDown, Camera, Rect );
+		OnUserClick( u, v, FirstDown, Camera, Rect );
+	}
+	else if ( Button == 'Middle' )
+	{
+		//	pan horz
+		const Camera = GetXrFrame().Camera;
+		let MoveScale = 0.5;
+		Camera.OnCameraPanLocal( -x*MoveScale, y*MoveScale, 0, FirstDown );
 	}
 	else if ( Button == 'Right' )
 	{
 		//	pan horz
 		const Camera = GetXrFrame().Camera;
-		let MoveScale = 0.1;
-		Camera.OnCameraPanLocal( -x*MoveScale, 0, y*MoveScale, FirstDown );
+		let MoveScale = 1.0;
+		Camera.OnCameraOrbit( x*MoveScale, y*MoveScale, 0, FirstDown );
 	}
 	else
 	{
