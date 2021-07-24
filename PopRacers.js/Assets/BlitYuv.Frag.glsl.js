@@ -10,7 +10,7 @@ varying vec2 uv;
 uniform sampler2D Luma;
 uniform sampler2D Plane1;
 uniform sampler2D Plane2;
-uniform int PlaneCount;
+uniform float PlaneCount;
 
 struct YuvColourParams
 {
@@ -55,7 +55,7 @@ void main()
 {
 	vec2 SampleUv = vec2(uv.x,1.0-uv.y);
 
-	if ( PlaneCount == 1 )
+	if ( PlaneCount == 1.0 )
 	{
 		gl_FragColor = texture2D( Luma, SampleUv );
 		return;
