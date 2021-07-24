@@ -29,7 +29,7 @@ async function LoadBackgroundImage()
 	InitialXrFrame.Camera.Position = [0.012,0.196,0.359];
 	InitialXrFrame.Camera.LookAt = [0.02,0.16,0.00];
 }
-LoadBackgroundImage();
+LoadBackgroundImage().catch(Pop.Warning);
 
 //	pending
 let XrFrames = [InitialXrFrame];	//	always keep one to render
@@ -173,7 +173,10 @@ function GetSceneRenderCommands(Camera,ScreenRect)
 	return Commands;
 }
 
-
+export function GetWorldGeos()
+{
+	return WorldGeos;
+}
 
 
 async function LoadWorldGeos(RenderContext)
@@ -278,7 +281,7 @@ export function OnMouseMove(x,y,Button,FirstDown=false)
 		let MoveScale = 1.0;
 		Camera.OnCameraOrbit( x*MoveScale, y*MoveScale, 0, FirstDown );
 		
-		Pop.Debug(`New Camera pos=${Camera.Position} lookat=${Camera.LookAt}`);
+		//Pop.Debug(`New Camera pos=${Camera.Position} lookat=${Camera.LookAt}`);
 	}
 	else
 	{

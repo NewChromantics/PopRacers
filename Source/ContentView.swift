@@ -14,11 +14,20 @@ struct ContentView: View {
 	@EnvironmentObject var externalDisplayContent: ExternalDisplayContent
 	
 	@State var renderView = PopEngineRenderView(name:"RenderView")
+	@State var SaveButton = PopTickBox(name:"SaveMeshes")
 
+	func Save()
+	{
+		//	we don't have a button type yet, toggle setting to trigger callback
+		SaveButton.value = !SaveButton.value
+	}
 
     var body: some View {
-        Text("Hello, world!")
-            .padding()
+    	Button(action: Save)
+    	{
+    		Text("Save Maps")
+		}
+        .padding()
        OpenglView(renderer:$renderView)
     }
 }

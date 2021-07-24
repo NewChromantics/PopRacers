@@ -10,7 +10,15 @@ import * as RenderScene from './RenderScene.js'
 //	gr: for now prevent creation of window on web
 const MainWindow = Pop.GetPlatform()=='Web' ? null : new Pop.Gui.Window(null);
 
+import * as Gui from './Gui.js'
 
+
+function SaveMeshes()
+{
+	const Geos = RenderScene.GetWorldGeos();
+	
+}
+Gui.SetEvent('SaveMeshes',SaveMeshes);
 
 
 async function CreateMainWindowRenderContext(RenderViewName)
