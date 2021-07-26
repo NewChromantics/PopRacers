@@ -24,7 +24,10 @@ function OnGuiEvent()
 	Handler(...Array.from(arguments));
 }
 
-const Window = new Pop.Gui.Window(null);
+//const Window = new Pop.Gui.Window(null);
+//	gr: for now prevent creation of window on web
+//		completely overrides mouse handling 
+const Window = Pop.GetPlatform()=='Web' ? null : new Pop.Gui.Window(null);
 
 function SetupGuiCallback(Name,Type)
 {
