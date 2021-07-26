@@ -31,9 +31,16 @@ const Window = Pop.GetPlatform()=='Web' ? null : new Pop.Gui.Window(null);
 
 function SetupGuiCallback(Name,Type)
 {
-	const Gui = new Type(Window,Name);
-	EventGuis[Name] = Gui;
-	Gui.OnChanged = OnGuiEvent.bind(Name);
+	try
+	{
+		const Gui = new Type(Window,Name);
+		EventGuis[Name] = Gui;
+		Gui.OnChanged = OnGuiEvent.bind(Name);
+	}
+	catch(e)
+	{
+		Pop.Warning(e);
+	}
 }
 	
 SetupGuiCallback( 'SaveMeshes', Pop.Gui.TickBox );
