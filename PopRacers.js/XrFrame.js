@@ -1,7 +1,7 @@
 import Pop from './PopEngineCommon/PopEngine.js'
 import PromiseQueue from './PopEngineCommon/PromiseQueue.js'
 import PopCamera from './PopEngineCommon/Camera.js'
-import {CreateIdentityMatrix,MatrixInverse4x4,GetMatrixTransposed} from './PopEngineCommon/Math.js'
+import {CreateIdentityMatrix,MatrixInverse4x4,MatrixMultiply4x4,GetMatrixTransposed} from './PopEngineCommon/Math.js'
 import {TransformPosition,Subtract3,Normalise3,Dot3} from './PopEngineCommon/Math.js'
 
 const Default = 'XrFrame.js';
@@ -110,7 +110,7 @@ function OnGeometryFrame(Frame)
 	}
 	
 	//	this transform also dictates the plane (center + up)
-	let LocalToWorld = ArKitToPopTransform(Frame.Meta.LocalToWorld);
+	let LocalToWorld = TransformGeoArkitToPop(Frame.Meta.LocalToWorld);
 	
 	const Anchor = new Anchor_t( Uuid, Triangles, TriangleDataSize, LocalToWorld, Frame.Meta );
 	//	skip non horizontal anchors
@@ -137,8 +137,8 @@ async function CameraThread()
 
 			const Options = {};
 			Options.Format = 'Yuv_8_88';	//	needed to start video with "Back Camera", oops
-			Options.AnchorGeometryStream = true;
-			//Options.WorldGeometryStream = true;
+			//Options.AnchorGeometryStream = true;
+			Options.WorldGeometryStream = true;
 			Options.Anchors = false;
 
 			const OnlyLatestFrame = true;
@@ -163,6 +163,31 @@ async function CameraThread()
 			await Pop.Yield(5*1000);
 		}
 	}
+}
+
+function TransformGeoArkitToPop(LocalToWorld)
+{
+	//	gr: this seems to be slightly different to the camera trasnform... hmmm
+	
+	LocalToWorld = GetMatrixTransposed(LocalToWorld);
+
+	const InvertX =
+	[
+		-1,0,0,0,
+		0,1,0,0,
+		0,0,1,0,
+		0,0,0,1
+	];
+	const InvertZ =
+	[
+		1,0,0,0,
+		0,1,0,0,
+		0,0,-1,0,
+		0,0,0,1
+	];
+	//LocalToWorld = MatrixMultiply4x4(InvertX,LocalToWorld);
+	LocalToWorld = MatrixMultiply4x4(InvertZ,LocalToWorld);
+	return LocalToWorld;
 }
 
 function ArKitToPopTransform(LocalToWorld)

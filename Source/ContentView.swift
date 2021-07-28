@@ -15,6 +15,7 @@ struct ContentView: View {
 	
 	@State var renderView = PopEngineRenderView(name:"RenderView")
 	@State var SaveButton = PopTickBox(name:"SaveMeshes")
+	@State var DollsHouseToggle = PopTickBox(name:"DollsHouse")
 
 	func Save()
 	{
@@ -23,6 +24,8 @@ struct ContentView: View {
 	}
 
     var body: some View {
+    	Toggle("DollsHouse View", isOn: $DollsHouseToggle.value)
+		.padding()
     	Button(action: Save)
     	{
     		Text("Save Maps")

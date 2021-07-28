@@ -15,7 +15,10 @@ import * as Gui from './Gui.js'
 
 function SaveMeshes()
 {
-	const Geos = RenderScene.GetWorldGeos();
+	let Geos = RenderScene.GetWorldGeos();
+	Geos = Geos.map( wg => wg.Anchor.Geometry );
+
+	
 	
 }
 Gui.SetEvent('SaveMeshes',SaveMeshes);

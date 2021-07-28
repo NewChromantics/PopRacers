@@ -14,8 +14,7 @@ export default class WorldGeo_t
 		this.TriangleBufferRenderContext = null;
 		this.AttribNames = null;
 
-
-		Pop.Debug(`New world geo Normal=${this.Normal}`);
+		//Pop.Debug(`New world geo Normal=${this.Normal} LocalToWorld=${this.LocalToWorld}`);
 	}
 	
 	async LoadAssets(RenderContext)

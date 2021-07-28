@@ -101,6 +101,9 @@ export function GetRenderCommands(FrameNumber,ScreenRect)
 	return Commands;
 }
 
+let RenderScale = 1.0;
+import {SetEvent} from './Gui.js'
+SetEvent('DollsHouse', (Enabled) => {Params.DrawDollsHouse = Enabled} );
 
 function GetSceneRenderCommands(Camera,ScreenRect)
 {
@@ -150,12 +153,26 @@ function GetSceneRenderCommands(Camera,ScreenRect)
 		const RaceRenderCommands = RaceTrack.GetRenderCommands(Uniforms,Camera,Assets);
 		Commands.push( ...RaceRenderCommands );
 		
+		let TargetScale = ( Params.DrawDollsHouse ) ? Params.DollsHouseScale : 1.0;
+		RenderScale = PopMath.Lerp( RenderScale, TargetScale, 0.1 );
+		
 		for ( let WorldGeo of Object.values(WorldGeos) )
 		{
 			if ( !WorldGeo.TriangleBuffer )
 				continue;
 			const GeoUniforms = Object.assign({},Uniforms);
 			GeoUniforms.LocalToWorldTransform = WorldGeo.LocalToWorld;
+			
+			GeoUniforms.LocalToWorldTransform = PopMath.MatrixMultiply4x4Multiple( WorldGeo.LocalToWorld, PopMath.CreateScaleMatrix(RenderScale,RenderScale,RenderScale) ); 
+
+			GeoUniforms.DecalImage = XrFrame.Planes[0];
+			const WorldToCamera = XrFrame.Camera.GetWorldToCameraMatrix();
+			const ScreenToCamera = XrFrame.Camera.GetProjectionMatrix([0,0,1,1]);
+			//const CameraToScreen = MatrixInverse4x4(ScreenToCamera);
+			const CameraToScreen = ScreenToCamera;
+			GeoUniforms.DecalWorldToScreen = PopMath.MatrixMultiply4x4Multiple( WorldToCamera, CameraToScreen );
+			//GeoUniforms.DecalWorldToScreen = CameraToScreen;
+			//Pop.Debug(`CameraToScreen=${CameraToScreen}`);
 
 			//	draw the plane geo
 			if ( Params.DrawWorldGeo )

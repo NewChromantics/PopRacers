@@ -44,3 +44,4 @@ function SetupGuiCallback(Name,Type)
 }
 	
 SetupGuiCallback( 'SaveMeshes', Pop.Gui.TickBox );
+SetupGuiCallback( 'DollsHouse', Pop.Gui.TickBox );

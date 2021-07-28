@@ -26,23 +26,68 @@ varying vec2 FragLocalUv;
 varying vec3 WorldPosition;
 varying vec3 WorldUp;
 
+uniform sampler2D DecalImage;
+uniform mat4 DecalWorldToScreen;
+
 const vec3 Blue = vec3(1,0,0);
 const vec3 Green = vec3(0,1,0);
+
+float Range(float Min,float Max,float Value)
+{
+	return (Value-Min) / (Max-Min);
+}
+vec2 GetDecalUv()
+{
+	vec4 Camera4 = DecalWorldToScreen * vec4(WorldPosition,1);
+	//vec2 Camera2 = (Camera4.xy * Camera4.z) ;/// Camera4.w;
+	vec2 Camera2 = Camera4.xy / Camera4.w;
+	//	-1..1 to 0..1
+	Camera2 *= 0.5;
+	Camera2 += 0.5;
+
+	return Camera2;
+}
+
+bool Inside01(float f)
+{
+	return (f>=0.0) && (f<=1.0);
+}
+
+bool Inside01(vec2 ff)
+{
+	return Inside01(ff.x)&&Inside01(ff.y);
+}
+
+//	.w = inside frustum
+vec4 GetDecalColour()
+{
+	vec2 DecalUv = GetDecalUv();
+	DecalUv.y = 1.0 - DecalUv.y;
+	vec4 Colour = texture2D( DecalImage, DecalUv );
+	Colour.w *= Inside01(DecalUv) ? 1.0 : 0.0;
+	return Colour;
+}
+
 void main()
 {
+	
 	bool Horizontal = abs(dot( WorldUp, vec3(0,1,0) )) > 0.5;
 	vec3 Colour = Horizontal ? Green : Blue;
 	//vec3 Colour = vec3( FragLocalUv, 1.0 );
 	//vec3 Colour = vec3( WorldPosition );
 	//vec3 Colour = (WorldUp+vec3(0.5,0.5,0.5)) / 2.0;	//	show normal
-	gl_FragColor = vec4( Colour, 1 );
+	vec4 DecalColour = GetDecalColour();
+	gl_FragColor.xyz = mix( Colour, DecalColour.xyz, DecalColour.w );
 	
-	vec3 xyz = WorldPosition.xyz * 40.0;
+	vec3 xyz = WorldPosition.xyz * 200.0;
 	xyz = fract(xyz);
 	bool x = xyz.x < 0.5;
 	bool y = (Horizontal ? xyz.z : xyz.y) < 0.5;
-	if ( x == y )
-		discard;
+	if ( x == y )	
+	{
+		//discard;
+		gl_FragColor.xyz *= 0.5;
+	}
 }
 `;
 
