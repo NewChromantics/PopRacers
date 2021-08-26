@@ -7,8 +7,8 @@ import * as PopMath from './PopEngineCommon/Math.js'
 import {Camera as PopCamera} from './PopEngineCommon/Camera.js'
 import WorldGeo_t from './WorldGeo.js'
 import {CreateQuad3Geometry} from './PopEngineCommon/CommonGeometry.js'
-//import * as RaceTrack from './RaceTrack.js'
-import * as RaceTrack from './Drink.js'
+import * as RaceTrack from './RaceTrack.js'
+//import * as RaceTrack from './Drink.js'
 import Params from './Params.js'
 
 const Default = 'RenderScene.js';
